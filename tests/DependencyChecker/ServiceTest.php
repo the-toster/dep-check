@@ -3,26 +3,24 @@ declare(strict_types=1);
 
 namespace Tests\DependencyChecker;
 
-use DepCheck\DependencyChecker\Checker;
+use DepCheck\DependencyChecker\Service;
 use DepCheck\DependencyChecker\Element;
 use DepCheck\DependencyChecker\Rules;
 use PHPUnit\Framework\TestCase;
 
-class CheckerTest extends TestCase
+class ServiceTest extends TestCase
 {
 
     public function testCheck()
     {
         $rules = new Rules();
-        $checker = new Checker($rules);
+        $checker = new Service($rules);
 
         $elements = [new Element('id', [], [])];
 
         $result = $checker->check($elements);
 
-        $this->assertEquals(1, $result->unknown);
-        $this->assertEquals(0, $result->allowed);
-        $this->assertEquals(0, $result->violate);
+        $this->assertEquals(1, $result->total);
 
     }
 }

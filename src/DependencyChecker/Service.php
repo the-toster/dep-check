@@ -14,7 +14,7 @@ use DepCheck\DependencyChecker\Result\UnknownDependsOn;
 use DepCheck\DependencyChecker\Result\UnknownDependsOnUnknown;
 use DepCheck\DependencyChecker\Result\UnknownElement;
 
-final class Checker
+final class Service
 {
     private Rules $rules;
 
