@@ -27,6 +27,56 @@ use PHPUnit\Framework\TestCase;
  */
 class ServiceTest extends TestCase
 {
+
+    /**
+     * @covers \DepCheck\DependencyChecker\Result\Allowed
+     * @covers \DepCheck\DependencyChecker\Result\Forbidden
+     */
+    public function testComplex(): void
+    {
+        $rules = new Rules();
+        $layerA = new Layer('a');
+        $layerB = new Layer('b');
+        $layerC = new Layer('c');
+        $rules->add($layerA, $layerB);
+        $rules->add($layerA, $layerC);
+        $rules->add($layerB, $layerC);
+        $checker = new Service($rules);
+
+
+        $elC = new Element('idC', [$layerC], []);
+        $elB = new Element('idB', [$layerB], [new Dependency($elC)]);
+        $elA = new Element('idA', [$layerA], [new Dependency($elB), new Dependency($elC)]);
+        $elC->dependencies[] = new Dependency($elA);
+        $elements = [$elA, $elB, $elC];
+
+        $result = $checker->check($elements);
+        $r = [
+            new Allowed($elA, $layerA, $elB, $layerB),
+            new Allowed($elA, $layerA, $elC, $layerC),
+            new Allowed($elA, $layerA, $elC, $layerC),
+            new Allowed($elB, $layerB, $elC, $layerC),
+            new Forbidden($elC, $layerC, $elA, $layerA),
+        ];
+        $this->assertEquals($r, $result->records);
+
+    }
+
+    /**
+     * @covers \DepCheck\DependencyChecker\Result\UnknownElement
+     */
+    public function testTotal(): void
+    {
+        $rules = new Rules();
+        $checker = new Service($rules);
+
+        $elements = [new Element('id', [], []), new Element('id2', [], [])];
+
+        $result = $checker->check($elements);
+
+        $this->assertEquals(2, $result->total);
+    }
+
     /**
      * @covers \DepCheck\DependencyChecker\Result\UnknownElement
      */
@@ -39,8 +89,7 @@ class ServiceTest extends TestCase
 
         $result = $checker->check($elements);
 
-        $this->assertEquals(1, $result->total);
-        $this->assertEquals(new UnknownElement($elements[0]), $result->records[0]);
+        $this->assertEquals([new UnknownElement($elements[0])], $result->records);
     }
 
     /**
@@ -60,9 +109,7 @@ class ServiceTest extends TestCase
         $elements = [$el1, $el2];
 
         $result = $checker->check($elements);
-
-        $this->assertEquals(1, $result->total);
-        $this->assertEquals(new Allowed($el1, $layerA, $el2, $layerB), $result->records[0]);
+        $this->assertEquals([new Allowed($el1, $layerA, $el2, $layerB)], $result->records);
 
     }
 
@@ -84,8 +131,7 @@ class ServiceTest extends TestCase
 
         $result = $checker->check($elements);
 
-        $this->assertEquals(1, $result->total);
-        $this->assertEquals(new Forbidden($el1, $layerA, $el2, $layerB), $result->records[0]);
+        $this->assertEquals([new Forbidden($el1, $layerA, $el2, $layerB)], $result->records);
     }
 
     /**
@@ -102,9 +148,7 @@ class ServiceTest extends TestCase
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
 
-        $this->assertEquals(2, $result->total);
-        $this->assertEquals(new UnknownElement($el1), $result->records[0]);
-        $this->assertEquals(new UnknownDependsOn($el1, $el2, $layerB), $result->records[1]);
+        $this->assertEquals([new UnknownElement($el1), new UnknownDependsOn($el1, $el2, $layerB)], $result->records);
     }
 
     /**
@@ -119,10 +163,12 @@ class ServiceTest extends TestCase
 
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
-        $this->assertEquals(3, $result->total);
-        $this->assertEquals(new UnknownElement($el1), $result->records[0]);
-        $this->assertEquals(new UnknownDependsOnUnknown($el1, $el2), $result->records[1]);
-        $this->assertEquals(new UnknownElement($el2), $result->records[2]);
+        $r = [
+            new UnknownElement($el1),
+            new UnknownDependsOnUnknown($el1, $el2),
+            new UnknownElement($el2)
+            ];
+        $this->assertEquals($r, $result->records);
     }
 
     /**
@@ -138,10 +184,6 @@ class ServiceTest extends TestCase
 
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
-        $this->assertEquals(2, $result->total);
-        $this->assertEquals(new DependsOnUnknown($el1, $layerA, $el2), $result->records[0]);
-
-        //occurs because checker iterate over el2 too
-        $this->assertEquals(new UnknownElement($el2), $result->records[1]);
+        $this->assertEquals([new DependsOnUnknown($el1, $layerA, $el2), new UnknownElement($el2)], $result->records);
     }
 }
