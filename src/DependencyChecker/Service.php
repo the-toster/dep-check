@@ -77,6 +77,7 @@ final class Service
             }
         }
 
+        return $r;
     }
 
 }

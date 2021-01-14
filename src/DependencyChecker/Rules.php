@@ -8,13 +8,13 @@ final class Rules
 {
     private array $rules = [];
 
-    public function add(string $from, string $to): void
+    public function add(Layer $from, Layer $to): void
     {
-        $this->rules[$from][$to] = true;
+        $this->rules[$from->name][$to->name] = true;
     }
 
-    public function has(string $from, string $to): bool
+    public function has(Layer $from, Layer $to): bool
     {
-        return isset($this->rules[$from][$to]);
+        return isset($this->rules[$from->name][$to->name]);
     }
 }

@@ -12,7 +12,6 @@ final class UnknownElement extends AbstractReportRecord
 
     public function __construct(Element $element)
     {
-        $this->setStatus(self::UNKNOWN);
         $this->element = $element;
     }
 }

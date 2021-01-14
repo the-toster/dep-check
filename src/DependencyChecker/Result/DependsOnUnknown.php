@@ -7,7 +7,7 @@ namespace DepCheck\DependencyChecker\Result;
 use DepCheck\DependencyChecker\Element;
 use DepCheck\DependencyChecker\Layer;
 
-final class DependsOnUnknown
+final class DependsOnUnknown extends AbstractReportRecord
 {
     public Element $fromEl;
     public Layer $fromLayer;
