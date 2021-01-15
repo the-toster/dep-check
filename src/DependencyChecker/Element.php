@@ -8,21 +8,25 @@ final class Element
 {
     public string $id;
 
-    /** @var Layer[] $layers */
-    public array $layers;
+    public ?Layer $layer;
 
     /** @var Dependency[] $dependencies */
     public array $dependencies;
 
-    public function __construct(string $id, array $layers, array $dependencies)
+    public function __construct(string $id, ?Layer $layer, array $dependencies)
     {
         $this->id = $id;
-        $this->layers = $layers;
+        $this->layer = $layer;
         $this->dependencies = $dependencies;
     }
 
     public function layerUnknown(): bool
     {
-        return count($this->layers) === 0;
+        return is_null($this->layer);
+    }
+
+    public function hasLayer(): bool
+    {
+        return !$this->layerUnknown();
     }
 }

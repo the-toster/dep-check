@@ -6,7 +6,6 @@ namespace DepCheck\DependencyChecker;
 
 use DepCheck\DependencyChecker\Result\AbstractReportRecord;
 use DepCheck\DependencyChecker\Result\Allowed;
-use DepCheck\DependencyChecker\Result\AllowedItem;
 use DepCheck\DependencyChecker\Result\DependsOnUnknown;
 use DepCheck\DependencyChecker\Result\Forbidden;
 use DepCheck\DependencyChecker\Result\Report;
@@ -57,23 +56,21 @@ final class Service
         $r = [];
 
         if($element->layerUnknown()) {
-            foreach ($on->layers as $toLayer) {
-
-                $r[] = new UnknownDependsOn($element, $on, $toLayer);
+            if($on->hasLayer()) {
+                $r[] = new UnknownDependsOn($element, $on, $on->layer);
             }
+            return $r;
         }
 
-        foreach ($element->layers as $fromLayer){
-            if($on->layerUnknown()) {
-                $r[] = new DependsOnUnknown($element, $fromLayer, $on);
-            }
-
-            foreach ($on->layers as $toLayer) {
-                if($this->rules->has($fromLayer, $toLayer)) {
-                    $r[] = new Allowed($element, $fromLayer, $on, $toLayer);
-                } else {
-                    $r[] = new Forbidden($element, $fromLayer, $on, $toLayer);
-                }
+        $fromLayer = $element->layer;
+        if($on->layerUnknown()) {
+            $r[] = new DependsOnUnknown($element, $fromLayer, $on);
+        } else {
+            $toLayer = $on->layer;
+            if($this->rules->has($fromLayer, $toLayer)) {
+                $r[] = new Allowed($element, $fromLayer, $on, $toLayer);
+            } else {
+                $r[] = new Forbidden($element, $fromLayer, $on, $toLayer);
             }
         }
 
