@@ -10,22 +10,22 @@ use DepCheck\LayerAssignmentService\AnnotationsService;
 final class App
 {
     private InputServiceInterface $input;
-    private AnnotationsService $assignment;
+    private AnnotationsService $layerAssignmentService;
 
     public function __construct(InputServiceInterface $input, AnnotationsService $assignment)
     {
         $this->input = $input;
-        $this->assignment = $assignment;
+        $this->layerAssignmentService = $assignment;
     }
 
-    public function run(): Report
+    public function run(Rules $rules): Report
     {
-        $nodes = $this->input->getNodes();
-        $elements = $this->assignment->assign($nodes);
-        $report = new DependencyChecker\Service();
         // get inputs - nodes without layers, but with relations and props
+        $nodes = $this->input->getNodes();
         // convert to elements
+        $elements = $this->layerAssignmentService->assign($nodes);
         // check
-
+        $report = new DependencyChecker\Service($rules);
+        return new Report();
     }
 }
