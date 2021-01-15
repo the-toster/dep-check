@@ -19,13 +19,7 @@ This tool should
        - to layer
 ```
 
- - allowed dependencies
-```
-- from item
-    - to item
-      - from layer
-       - to layer
-```
+ - allowed dependencies: N
 
 ## Possible checker results
  - allowed / forbidden dependencies
@@ -57,6 +51,12 @@ This tool should
 According to report format, looks like we don't need to perform unknownElements dependency check at all.  
 Instead, we should put it to separate report first.  
 
-One more thing I want to implement is IO checker, and corresponding markup of a layers. 
-Only explicit IO layer may perform IO, and only IO layer may depends on it. Also, it should depend on some inteface.
-So, both pure and IO layers depends on some interface. 
+## Questions  
+
+
+One more thing I want to implement is IO checker, and corresponding markup of a layers.
+Only explicit IO layer may perform IO, and only IO layer may depends on it. Also, it should depend on some interface.  
+So, both pure and IO layers depends on some interface.
+
+And one more thing again. One element definitely can't belong to several layers.  
+Initially, this possibility was added to express layer groups, and as I see now, it was mistake.  

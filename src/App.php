@@ -6,6 +6,7 @@ namespace DepCheck;
 
 use DepCheck\Input\InputServiceInterface;
 use DepCheck\LayerAssignmentService\AnnotationsService;
+use DepCheck\Report\Report;
 
 final class App
 {
