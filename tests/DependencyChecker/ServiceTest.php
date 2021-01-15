@@ -54,7 +54,6 @@ class ServiceTest extends TestCase
         $r = [
             new Allowed($elA, $layerA, $elB, $layerB),
             new Allowed($elA, $layerA, $elC, $layerC),
-            new Allowed($elA, $layerA, $elC, $layerC),
             new Allowed($elB, $layerB, $elC, $layerC),
             new Forbidden($elC, $layerC, $elA, $layerA),
         ];
