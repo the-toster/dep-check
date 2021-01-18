@@ -44,9 +44,9 @@ class ServiceTest extends TestCase
         $checker = new Service($rules);
 
 
-        $elC = new Element('idC', [$layerC], []);
-        $elB = new Element('idB', [$layerB], [new Dependency($elC)]);
-        $elA = new Element('idA', [$layerA], [new Dependency($elB), new Dependency($elC)]);
+        $elC = new Element('idC', $layerC, []);
+        $elB = new Element('idB', $layerB, [new Dependency($elC)]);
+        $elA = new Element('idA', $layerA, [new Dependency($elB), new Dependency($elC)]);
         $elC->dependencies[] = new Dependency($elA);
         $elements = [$elA, $elB, $elC];
 
@@ -69,7 +69,7 @@ class ServiceTest extends TestCase
         $rules = new Rules();
         $checker = new Service($rules);
 
-        $elements = [new Element('id', [], []), new Element('id2', [], [])];
+        $elements = [new Element('id', null, []), new Element('id2', null, [])];
 
         $result = $checker->check($elements);
 
@@ -84,7 +84,7 @@ class ServiceTest extends TestCase
         $rules = new Rules();
         $checker = new Service($rules);
 
-        $elements = [new Element('id', [], [])];
+        $elements = [new Element('id', null, [])];
 
         $result = $checker->check($elements);
 
@@ -103,8 +103,8 @@ class ServiceTest extends TestCase
         $checker = new Service($rules);
 
 
-        $el2 = new Element('id2', [$layerB], []);
-        $el1 = new Element('id1', [$layerA], [new Dependency($el2)]);
+        $el2 = new Element('id2', $layerB, []);
+        $el1 = new Element('id1', $layerA, [new Dependency($el2)]);
         $elements = [$el1, $el2];
 
         $result = $checker->check($elements);
@@ -124,8 +124,8 @@ class ServiceTest extends TestCase
         $checker = new Service($rules);
 
 
-        $el2 = new Element('id2', [$layerB], []);
-        $el1 = new Element('id1', [$layerA], [new Dependency($el2)]);
+        $el2 = new Element('id2', $layerB, []);
+        $el1 = new Element('id1', $layerA, [new Dependency($el2)]);
         $elements = [$el1, $el2];
 
         $result = $checker->check($elements);
@@ -140,8 +140,8 @@ class ServiceTest extends TestCase
     public function testUnknownDependsOn(): void
     {
         $layerB = new Layer('b');
-        $el2 = new Element('id2', [$layerB], []);
-        $el1 = new Element('id1', [], [new Dependency($el2)]);
+        $el2 = new Element('id2', $layerB, []);
+        $el1 = new Element('id1', null, [new Dependency($el2)]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
@@ -156,8 +156,8 @@ class ServiceTest extends TestCase
      */
     public function testUnknownDependsOnUnknown(): void
     {
-        $el2 = new Element('id2', [], []);
-        $el1 = new Element('id1', [], [new Dependency($el2)]);
+        $el2 = new Element('id2', null, []);
+        $el1 = new Element('id1', null, [new Dependency($el2)]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
@@ -177,8 +177,8 @@ class ServiceTest extends TestCase
     public function testDependsOnUnknown(): void
     {
         $layerA = new Layer('a');
-        $el2 = new Element('id2', [], []);
-        $el1 = new Element('id1', [$layerA], [new Dependency($el2)]);
+        $el2 = new Element('id2', null, []);
+        $el1 = new Element('id1', $layerA, [new Dependency($el2)]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
