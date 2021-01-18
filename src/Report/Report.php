@@ -19,7 +19,7 @@ final class Report
     /** @var Element[] */
     public array $unknown;
 
-    /** @var AbstractReportRecord[] */
+    /** @var ElementViolations[] */
     public array $violations;
 
     /**
@@ -27,8 +27,10 @@ final class Report
      */
     public function __construct($records) {
         $this->unknown = $this->getUnknown($records);
-        $this->violations = $this->getViolations($records);
-        $this->summary = new Summary(count($this->unknown), count($this->violations), $this->countAllowed($records));
+        $violateRecords = $this->getViolateRecords($records);
+        $this->violations = $this->buildViolations($violateRecords);
+
+        $this->summary = new Summary(count($this->unknown), count($violateRecords), $this->countAllowed($records));
     }
 
     private function getUnknown(array $records): array
@@ -42,7 +44,7 @@ final class Report
         return $r;
     }
 
-    private function getViolations(array $records): array
+    private function getViolateRecords(array $records): array
     {
         $r = [];
         foreach ($records as $record) {
@@ -67,5 +69,18 @@ final class Report
             }
         }
         return $r;
+    }
+
+    private function buildViolations(array $violateRecords)
+    {
+        $r = new ViolationReport();
+        foreach ($violateRecords as $record) {
+
+            if($record instanceof Forbidden ||
+                $record instanceof DependsOnUnknown) {
+                $r->addRecord($record);
+            }
+        }
+        return $record;
     }
 }

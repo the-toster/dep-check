@@ -5,19 +5,21 @@ Way to explicit complexity control
 This tool should 
  - force explicit assignment of _every_ class or interface to some layer
  - forbid any dependency between layers that not explicitly allowed
+ - force to markup IO layers
+ - disallow direct dependencies from pure to IO
 
 ## Report structure
- - summary
- - unknown elements: Unknown elements
+we need some summarizer to access report records
+ - summary (number of allowed deps, violations, unknown elements)
+ - unknown elements: Unknown elements  
    (we don't include `UnknownDependsOn*` in this list)
- - violations: Forbidden, Depends on unknown
+   - just list of elements
+ - violations: Forbidden, Depends on unknown  
    (but we include DependsOnUnknown here)
 ```
-- from item / layer
-    - to item / layer
+   - from item / layer
+    - to item [/ layer]
 ```
-
- - allowed dependencies: N
 
 ## Possible checker results
  - allowed / forbidden dependencies
@@ -29,8 +31,8 @@ This tool should
     - to item / layer
 
  - unknown dependencies (to item without layers)
-  - from item
-    - to item / layer
+  - from item / layer
+    - to item
 
 - unknown dependencies (no layers)
     - from item
