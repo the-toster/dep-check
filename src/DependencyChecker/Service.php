@@ -57,20 +57,20 @@ final class Service
 
         if($element->layerUnknown()) {
             if($on->hasLayer()) {
-                $r[] = new UnknownDependsOn($element, $on, $on->layer);
+                $r[] = new UnknownDependsOn($element, $on);
             }
             return $r;
         }
 
         $fromLayer = $element->layer;
         if($on->layerUnknown()) {
-            $r[] = new DependsOnUnknown($element, $fromLayer, $on);
+            $r[] = new DependsOnUnknown($element, $on);
         } else {
             $toLayer = $on->layer;
             if($this->rules->has($fromLayer, $toLayer)) {
-                $r[] = new Allowed($element, $fromLayer, $on, $toLayer);
+                $r[] = new Allowed($element, $on);
             } else {
-                $r[] = new Forbidden($element, $fromLayer, $on, $toLayer);
+                $r[] = new Forbidden($element, $on);
             }
         }
 

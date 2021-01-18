@@ -52,10 +52,10 @@ class ServiceTest extends TestCase
 
         $result = $checker->check($elements);
         $r = [
-            new Allowed($elA, $layerA, $elB, $layerB),
-            new Allowed($elA, $layerA, $elC, $layerC),
-            new Allowed($elB, $layerB, $elC, $layerC),
-            new Forbidden($elC, $layerC, $elA, $layerA),
+            new Allowed($elA, $elB),
+            new Allowed($elA, $elC),
+            new Allowed($elB, $elC),
+            new Forbidden($elC, $elA),
         ];
         $this->assertEquals($r, $result->records);
 
@@ -108,7 +108,7 @@ class ServiceTest extends TestCase
         $elements = [$el1, $el2];
 
         $result = $checker->check($elements);
-        $this->assertEquals([new Allowed($el1, $layerA, $el2, $layerB)], $result->records);
+        $this->assertEquals([new Allowed($el1, $el2)], $result->records);
 
     }
 
@@ -130,7 +130,7 @@ class ServiceTest extends TestCase
 
         $result = $checker->check($elements);
 
-        $this->assertEquals([new Forbidden($el1, $layerA, $el2, $layerB)], $result->records);
+        $this->assertEquals([new Forbidden($el1, $el2)], $result->records);
     }
 
     /**
@@ -147,7 +147,7 @@ class ServiceTest extends TestCase
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
 
-        $this->assertEquals([new UnknownElement($el1), new UnknownDependsOn($el1, $el2, $layerB)], $result->records);
+        $this->assertEquals([new UnknownElement($el1), new UnknownDependsOn($el1, $el2)], $result->records);
     }
 
     /**
@@ -183,6 +183,6 @@ class ServiceTest extends TestCase
 
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
-        $this->assertEquals([new DependsOnUnknown($el1, $layerA, $el2), new UnknownElement($el2)], $result->records);
+        $this->assertEquals([new DependsOnUnknown($el1, $el2), new UnknownElement($el2)], $result->records);
     }
 }

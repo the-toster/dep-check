@@ -22,13 +22,16 @@ final class Report
     /** @var AbstractReportRecord[] */
     public array $violations;
 
-    public function __construct(DepReport $depReport) {
-        $this->fillUnknown($depReport->records);
-        $this->fillViolations($depReport->records);
-        $allowedNumber = $this->fillAllowed($depReport->records);
+    /**
+     * @param AbstractReportRecord[]
+     */
+    public function __construct($records) {
+        $this->unknown = $this->getUnknown($records);
+        $this->violations = $this->getViolations($records);
+        $this->summary = new Summary(count($this->unknown), count($this->violations), $this->countAllowed($records));
     }
 
-    private function fillUnknown(array $records): void
+    private function getUnknown(array $records): array
     {
         $r = [];
         foreach ($records as $record) {
@@ -36,10 +39,10 @@ final class Report
                 $r[] = $record->element;
             }
         }
-        $this->unknown = $r;
+        return $r;
     }
 
-    private function fillViolations(array $records): void
+    private function getViolations(array $records): array
     {
         $r = [];
         foreach ($records as $record) {
@@ -52,17 +55,17 @@ final class Report
             }
         }
 
-        $this->violations = $r;
+        return $r;
     }
 
-    private function fillAllowed(array $records): void
+    private function countAllowed(array $records): int
     {
-        $r = [];
+        $r = 0;
         foreach ($records as $record) {
             if($record instanceof Allowed) {
-                $r[] = $record;
+                $r++;
             }
         }
-        $this->allowed = $records;
+        return $r;
     }
 }

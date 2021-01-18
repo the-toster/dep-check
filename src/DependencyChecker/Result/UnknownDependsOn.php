@@ -11,13 +11,11 @@ final class UnknownDependsOn extends AbstractReportRecord
 {
     public Element $fromEl;
     public Element $toEl;
-    public Layer $toLayer;
 
-    public function __construct(Element $fromEl, Element $toEl, Layer $toLayer)
+    public function __construct(Element $fromEl, Element $toEl)
     {
         $this->fromEl = $fromEl;
         $this->toEl = $toEl;
-        $this->toLayer = $toLayer;
     }
 
 
