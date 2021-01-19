@@ -17,11 +17,21 @@ final class ViolationReport
     /**
      * @param Forbidden|DependsOnUnknown $record
      */
-    public function addRecord(AbstractReportRecord $record): void
+    private function addRecord(AbstractReportRecord $record): void
     {
         $this->initElementViolations($record->fromEl);
         $this->addViolation($record->fromEl, new Violation($record->toEl));
         $this->total++;
+    }
+
+    public function addForbidden(Forbidden $forbidden): void
+    {
+        $this->addRecord($forbidden);
+    }
+
+    public function addDependsOnUnknown(DependsOnUnknown $dependsOnUnknown): void
+    {
+        $this->addRecord($dependsOnUnknown);
     }
 
     private function initElementViolations(Element $fromEl)

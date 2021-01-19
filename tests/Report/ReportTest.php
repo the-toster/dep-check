@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tests\Report;
 
 
+use DepCheck\DependencyChecker\Dependency;
 use DepCheck\DependencyChecker\Element;
 use DepCheck\DependencyChecker\Layer;
 use DepCheck\DependencyChecker\Result\Allowed;
@@ -12,6 +13,8 @@ use DepCheck\DependencyChecker\Result\Forbidden;
 use DepCheck\DependencyChecker\Result\UnknownDependsOn;
 use DepCheck\DependencyChecker\Result\UnknownDependsOnUnknown;
 use DepCheck\DependencyChecker\Result\UnknownElement;
+use DepCheck\DependencyChecker\Rules;
+use DepCheck\DependencyChecker\Service;
 use DepCheck\Report\Report;
 
 /**
@@ -20,10 +23,11 @@ use DepCheck\Report\Report;
  */
 final class ReportTest extends \PHPUnit\Framework\TestCase
 {
-    public function testBasic(): void
+    /** @test */
+    public function it_count_summary(): void
     {
         $l = new Layer('');
-        $e = new Element('', $l, []);
+        $e = new Element('el_id', $l, []);
         $records = [
             // 3 allowed
             new Allowed($e, $e),
@@ -34,7 +38,7 @@ final class ReportTest extends \PHPUnit\Framework\TestCase
             new UnknownElement($e),
             new UnknownElement($e),
 
-            //not used
+            //should skip this
             new UnknownDependsOn($e, $e),
             new UnknownDependsOnUnknown($e, $e),
 
@@ -50,6 +54,6 @@ final class ReportTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(3, $report->summary->allowedDependencies);
         $this->assertEquals(2, $report->summary->unknownElements);
         $this->assertEquals(4, $report->summary->violations);
-
     }
+
 }

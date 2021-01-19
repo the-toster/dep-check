@@ -15,48 +15,26 @@ use DepCheck\DependencyChecker\Result\UnknownElement;
 final class Report
 {
     public Summary $summary;
-
-    /** @var Element[] */
-    public array $unknown;
-
-    /** @var ElementViolations[] */
-    public array $violations;
+    public UnknownReport $unknown;
+    public ViolationReport $violations;
 
     /**
      * @param AbstractReportRecord[]
      */
     public function __construct($records) {
-        $this->unknown = $this->getUnknown($records);
-        $violateRecords = $this->getViolateRecords($records);
-        $this->violations = $this->buildViolations($violateRecords);
-
-        $this->summary = new Summary(count($this->unknown), count($violateRecords), $this->countAllowed($records));
+        $this->unknown = $this->buildUnknown($records);
+        $this->violations = $this->buildViolations($records);
+        $this->summary = new Summary($this->unknown->total, $this->violations->total, $this->countAllowed($records));
     }
 
-    private function getUnknown(array $records): array
+    private function buildUnknown(array $records): UnknownReport
     {
-        $r = [];
+        $r = new UnknownReport;
         foreach ($records as $record) {
             if($record instanceof UnknownElement) {
-                $r[] = $record->element;
+                $r->add($record);
             }
         }
-        return $r;
-    }
-
-    private function getViolateRecords(array $records): array
-    {
-        $r = [];
-        foreach ($records as $record) {
-            if($record instanceof Forbidden) {
-                $r[] = $record;
-            }
-
-            if($record instanceof DependsOnUnknown) {
-                $r[] = $record;
-            }
-        }
-
         return $r;
     }
 
@@ -71,16 +49,18 @@ final class Report
         return $r;
     }
 
-    private function buildViolations(array $violateRecords)
+    private function buildViolations(array $violateRecords): ViolationReport
     {
         $r = new ViolationReport();
         foreach ($violateRecords as $record) {
+            if($record instanceof Forbidden){
+                $r->addForbidden($record);
+            }
 
-            if($record instanceof Forbidden ||
-                $record instanceof DependsOnUnknown) {
-                $r->addRecord($record);
+            if($record instanceof DependsOnUnknown) {
+                $r->addDependsOnUnknown($record);
             }
         }
-        return $record;
+        return $r;
     }
 }
