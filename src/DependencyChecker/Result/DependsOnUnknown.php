@@ -4,18 +4,19 @@ declare(strict_types=1);
 namespace DepCheck\DependencyChecker\Result;
 
 
+use DepCheck\DependencyChecker\Dependency;
 use DepCheck\DependencyChecker\Element;
-use DepCheck\DependencyChecker\Layer;
 
 final class DependsOnUnknown extends AbstractReportRecord
 {
     public Element $fromEl;
-    public Element $toEl;
+    public Dependency $dependency;
 
-    public function __construct(Element $fromEl, Element $toEl)
+    public function __construct(Element $fromEl, Dependency $dependency)
     {
         $this->fromEl = $fromEl;
-        $this->toEl = $toEl;
+        $this->dependency = $dependency;
     }
+
 
 }

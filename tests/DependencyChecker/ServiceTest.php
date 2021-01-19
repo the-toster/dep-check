@@ -5,6 +5,7 @@ namespace Tests\DependencyChecker;
 
 use DepCheck\DependencyChecker\Dependency;
 use DepCheck\DependencyChecker\Layer;
+use DepCheck\DependencyChecker\Position;
 use DepCheck\DependencyChecker\Result\Allowed;
 use DepCheck\DependencyChecker\Result\DependsOnUnknown;
 use DepCheck\DependencyChecker\Result\Forbidden;
@@ -43,19 +44,25 @@ class ServiceTest extends TestCase
         $rules->add($layerB, $layerC);
         $checker = new Service($rules);
 
+        $pos = new Position(0, 0);
 
         $elC = new Element('idC', $layerC, []);
-        $elB = new Element('idB', $layerB, [new Dependency($elC)]);
-        $elA = new Element('idA', $layerA, [new Dependency($elB), new Dependency($elC)]);
-        $elC->dependencies[] = new Dependency($elA);
+        $depC = new Dependency($elC, $pos);
+        $elB = new Element('idB', $layerB, [$depC]);
+
+        $depB = new Dependency($elC, $pos);
+        $elA = new Element('idA', $layerA, [$depB, $depC]);
+
+        $depA = new Dependency($elA, $pos);
+        $elC->dependencies[] = $depA ;
         $elements = [$elA, $elB, $elC];
 
         $result = $checker->check($elements);
         $r = [
-            new Allowed($elA, $elB),
-            new Allowed($elA, $elC),
-            new Allowed($elB, $elC),
-            new Forbidden($elC, $elA),
+            new Allowed($elA, $depB),
+            new Allowed($elA, $depC),
+            new Allowed($elB, $depC),
+            new Forbidden($elC, $depA),
         ];
         $this->assertEquals($r, $result->records);
 
@@ -141,13 +148,14 @@ class ServiceTest extends TestCase
     {
         $layerB = new Layer('b');
         $el2 = new Element('id2', $layerB, []);
-        $el1 = new Element('id1', null, [new Dependency($el2)]);
+        $dep = new Dependency($el2, new Position(0, 0));
+        $el1 = new Element('id1', null, [$dep]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
 
-        $this->assertEquals([new UnknownElement($el1), new UnknownDependsOn($el1, $el2)], $result->records);
+        $this->assertEquals([new UnknownElement($el1), new UnknownDependsOn($el1, $dep)], $result->records);
     }
 
     /**
@@ -157,14 +165,14 @@ class ServiceTest extends TestCase
     public function testUnknownDependsOnUnknown(): void
     {
         $el2 = new Element('id2', null, []);
-        $el1 = new Element('id1', null, [new Dependency($el2)]);
+        $el1 = new Element('id1', null, [new Dependency($el2, new Position(0, 0))]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
         $r = [
             new UnknownElement($el1),
-            new UnknownDependsOnUnknown($el1, $el2),
+            new UnknownDependsOnUnknown($el1, $dep),
             new UnknownElement($el2)
             ];
         $this->assertEquals($r, $result->records);
@@ -178,11 +186,12 @@ class ServiceTest extends TestCase
     {
         $layerA = new Layer('a');
         $el2 = new Element('id2', null, []);
-        $el1 = new Element('id1', $layerA, [new Dependency($el2)]);
+        $dep = new Dependency($el2, new Position(0, 0));
+        $el1 = new Element('id1', $layerA, [$dep]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
         $result = $checker->check($elements);
-        $this->assertEquals([new DependsOnUnknown($el1, $el2), new UnknownElement($el2)], $result->records);
+        $this->assertEquals([new DependsOnUnknown($el1, $dep), new UnknownElement($el2)], $result->records);
     }
 }

@@ -37,10 +37,10 @@ final class Service
             foreach ($element->dependencies as $dependency) {
 
                 if($dependency->on->layerUnknown() && $element->layerUnknown()) {
-                    $r->addItem(new UnknownDependsOnUnknown($element, $dependency->on));
+                    $r->addItem(new UnknownDependsOnUnknown($element, $dependency));
                 }
 
-                $r->addItems($this->getDependencyResults($element, $dependency->on));
+                $r->addItems($this->getDependencyResults($element, $dependency));
             }
         }
         return $r;
@@ -48,29 +48,29 @@ final class Service
 
     /**
      * @param Element $element
-     * @param Element $on
+     * @param Dependency $dependency
      * @return AbstractReportRecord[]
      */
-    private function getDependencyResults(Element $element, Element $on): array
+    private function getDependencyResults(Element $element, Dependency $dependency): array
     {
         $r = [];
 
         if($element->layerUnknown()) {
-            if($on->hasLayer()) {
-                $r[] = new UnknownDependsOn($element, $on);
+            if($dependency->on->hasLayer()) {
+                $r[] = new UnknownDependsOn($element, $dependency);
             }
             return $r;
         }
 
         $fromLayer = $element->layer;
-        if($on->layerUnknown()) {
-            $r[] = new DependsOnUnknown($element, $on);
+        if($dependency->on->layerUnknown()) {
+            $r[] = new DependsOnUnknown($element, $dependency);
         } else {
-            $toLayer = $on->layer;
+            $toLayer = $dependency->on->layer;
             if($this->rules->has($fromLayer, $toLayer)) {
-                $r[] = new Allowed($element, $on);
+                $r[] = new Allowed($element, $dependency);
             } else {
-                $r[] = new Forbidden($element, $on);
+                $r[] = new Forbidden($element, $dependency);
             }
         }
 

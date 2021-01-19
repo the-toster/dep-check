@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace Tests\Report;
 
 
+use DepCheck\DependencyChecker\Dependency;
 use DepCheck\DependencyChecker\Element;
 use DepCheck\DependencyChecker\Layer;
+use DepCheck\DependencyChecker\Position;
 use DepCheck\DependencyChecker\Result\DependsOnUnknown;
 use DepCheck\DependencyChecker\Result\Forbidden;
 use DepCheck\Report\Violation;
@@ -28,21 +30,27 @@ final class ViolationReportTest extends TestCase
         $elC = new Element('C', new Layer('C'), []);
         $elUnknown = new Element('Unk', null, []);
 
-        $report->addForbidden(new Forbidden($elC, $elA));
-        $report->addForbidden(new Forbidden($elC, $elB));
-        $report->addForbidden(new Forbidden($elB, $elA));
-        $report->addForbidden(new Forbidden($elB, $elA));
-        $report->addDependsOnUnknown(new DependsOnUnknown($elC, $elUnknown));
-        $report->addDependsOnUnknown(new DependsOnUnknown($elB, $elUnknown));
+        $pos = new Position(0, 0);
+        $depA = new Dependency($elA, $pos);
+        $depB = new Dependency($elB, $pos);
+        $depA2 = new Dependency($elA, new Position(1, 0));
+        $depOnUnknown = new Dependency($elUnknown, $pos);
+
+        $report->addForbidden(new Forbidden($elC, $depA));
+        $report->addForbidden(new Forbidden($elC, $depB));
+        $report->addForbidden(new Forbidden($elB, $depA));
+        $report->addForbidden(new Forbidden($elB, $depA2));
+        $report->addDependsOnUnknown(new DependsOnUnknown($elC, $depOnUnknown));
+        $report->addDependsOnUnknown(new DependsOnUnknown($elB, $depOnUnknown));
 
         $this->assertEquals([
             'C' => [
-                'A' => [new Violation($elA)],
-                'B' => [new Violation($elB)],
-                'Unk' => [new Violation($elUnknown)]
+                'A' => [new Violation($depA)],
+                'B' => [new Violation($depB)],
+                'Unk' => [new Violation($depOnUnknown)]
             ],
             'B' => [
-                'A' => [new Violation($elA), new Violation($elA)],
+                'A' => [new Violation($depA), new Violation($elA)],
                 'Unk' => [new Violation($elUnknown)],
             ]
         ], $report->elementViolations);
