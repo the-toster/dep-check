@@ -20,7 +20,7 @@ final class ViolationReport
     private function addRecord(AbstractReportRecord $record): void
     {
         $this->initElementViolations($record->fromEl);
-        $this->addViolation($record->fromEl, new Violation($record->toEl));
+        $this->addViolation($record->fromEl, new Violation($record->dependency));
         $this->total++;
     }
 
@@ -44,10 +44,10 @@ final class ViolationReport
 
     private function addViolation(Element $from, Violation $violation): void
     {
-        if(!isset($this->elementViolations[$from->id][$violation->toElement->id])) {
-            $this->elementViolations[$from->id][$violation->toElement->id] = [];
+        if(!isset($this->elementViolations[$from->id][$violation->getElementId()])) {
+            $this->elementViolations[$from->id][$violation->getElementId()] = [];
         }
-        $this->elementViolations[$from->id][$violation->toElement->id][] = $violation;
+        $this->elementViolations[$from->id][$violation->getElementId()][] = $violation;
     }
 
     public function getElement(string $id): Element

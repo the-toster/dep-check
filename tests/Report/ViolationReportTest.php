@@ -50,8 +50,8 @@ final class ViolationReportTest extends TestCase
                 'Unk' => [new Violation($depOnUnknown)]
             ],
             'B' => [
-                'A' => [new Violation($depA), new Violation($elA)],
-                'Unk' => [new Violation($elUnknown)],
+                'A' => [new Violation($depA), new Violation($depA2)],
+                'Unk' => [new Violation($depOnUnknown)],
             ]
         ], $report->elementViolations);
     }

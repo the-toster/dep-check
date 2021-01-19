@@ -111,11 +111,12 @@ class ServiceTest extends TestCase
 
 
         $el2 = new Element('id2', $layerB, []);
-        $el1 = new Element('id1', $layerA, [new Dependency($el2)]);
+        $dep = new Dependency($el2, new Position(0, 0));
+        $el1 = new Element('id1', $layerA, [$dep]);
         $elements = [$el1, $el2];
 
         $result = $checker->check($elements);
-        $this->assertEquals([new Allowed($el1, $el2)], $result->records);
+        $this->assertEquals([new Allowed($el1, $dep)], $result->records);
 
     }
 
@@ -132,12 +133,13 @@ class ServiceTest extends TestCase
 
 
         $el2 = new Element('id2', $layerB, []);
-        $el1 = new Element('id1', $layerA, [new Dependency($el2)]);
+        $dep = new Dependency($el2, new Position(0, 0));
+        $el1 = new Element('id1', $layerA, [$dep]);
         $elements = [$el1, $el2];
 
         $result = $checker->check($elements);
 
-        $this->assertEquals([new Forbidden($el1, $el2)], $result->records);
+        $this->assertEquals([new Forbidden($el1, $dep)], $result->records);
     }
 
     /**
@@ -165,7 +167,8 @@ class ServiceTest extends TestCase
     public function testUnknownDependsOnUnknown(): void
     {
         $el2 = new Element('id2', null, []);
-        $el1 = new Element('id1', null, [new Dependency($el2, new Position(0, 0))]);
+        $dep = new Dependency($el2, new Position(0, 0));
+        $el1 = new Element('id1', null, [$dep]);
         $elements = [$el1, $el2];
 
         $checker = new Service(new Rules());
