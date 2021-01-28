@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace DepCheck;
 
 
-use DepCheck\Input\InputServiceInterface;
-use DepCheck\LayerAssignmentService\AnnotationsService;
-use DepCheck\Report\Report;
+use DepCheck\Model\Input\InputServiceInterface;
+use DepCheck\Model\LayerAssignmentService\AnnotationsService;
+use DepCheck\Model\Report\Report;
 
 final class App
 {
@@ -26,7 +26,7 @@ final class App
         // convert to elements
         $elements = $this->layerAssignmentService->assign($nodes);
         // check
-        $report = new DependencyChecker\Service($rules);
+        $report = new DepCheck\Model\DependencyChecker\Service($rules);
         return new Report();
     }
 }

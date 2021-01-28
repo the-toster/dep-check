@@ -18,7 +18,7 @@ we need some summarizer to access report records
    (but we include DependsOnUnknown here)
 ```
    - from item / layer
-    - to item [/ layer]
+    - to item [/ layer] : position
 ```
 
 ## Possible checker results
@@ -43,13 +43,6 @@ we need some summarizer to access report records
 
 
 ## How it should operate
-
-According to report format, looks like we don't need to perform unknownElements dependency check at all.  
-Instead, we should put it to separate report first. - But, it works now, and covered. So let ot be.
-
-## Questions  
-
-One more thing I want to implement is IO checker, and corresponding markup of a layers.
-Only explicit IO layer may perform IO, and only IO layer may depends on it. Also, it should depend on some interface.  
-So, both pure and IO layers depends on some interface.
-
+Somehow get all definitions from source files - populate `Nodes` (and dependencies).
+Dependencies should contain related node id (maybe id should contain a type?), type of dependency, and `Position`
+Than we translate it into an elements set - by assigning layers. Maybe just nodes with layers?

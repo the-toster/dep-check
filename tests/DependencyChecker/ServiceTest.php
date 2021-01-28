@@ -3,35 +3,35 @@ declare(strict_types=1);
 
 namespace Tests\DependencyChecker;
 
-use DepCheck\DependencyChecker\Dependency;
-use DepCheck\DependencyChecker\Layer;
-use DepCheck\DependencyChecker\Position;
-use DepCheck\DependencyChecker\Result\Allowed;
-use DepCheck\DependencyChecker\Result\DependsOnUnknown;
-use DepCheck\DependencyChecker\Result\Forbidden;
-use DepCheck\DependencyChecker\Result\UnknownDependsOn;
-use DepCheck\DependencyChecker\Result\UnknownDependsOnUnknown;
-use DepCheck\DependencyChecker\Result\UnknownElement;
-use DepCheck\DependencyChecker\Service;
-use DepCheck\DependencyChecker\Element;
-use DepCheck\DependencyChecker\Rules;
+use DepCheck\Model\DependencyChecker\Dependency;
+use DepCheck\Model\DependencyChecker\Layer;
+use DepCheck\Model\DependencyChecker\Position;
+use DepCheck\Model\DependencyChecker\Result\Allowed;
+use DepCheck\Model\DependencyChecker\Result\DependsOnUnknown;
+use DepCheck\Model\DependencyChecker\Result\Forbidden;
+use DepCheck\Model\DependencyChecker\Result\UnknownDependsOn;
+use DepCheck\Model\DependencyChecker\Result\UnknownDependsOnUnknown;
+use DepCheck\Model\DependencyChecker\Result\UnknownElement;
+use DepCheck\Model\DependencyChecker\Service;
+use DepCheck\Model\DependencyChecker\Element;
+use DepCheck\Model\DependencyChecker\Rules;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \DepCheck\DependencyChecker\Service
- * @covers \DepCheck\DependencyChecker\Rules
- * @covers \DepCheck\DependencyChecker\Element
- * @covers \DepCheck\DependencyChecker\Layer
- * @covers \DepCheck\DependencyChecker\Dependency
- * @covers \DepCheck\DependencyChecker\Result\Report
+ * @covers \DepCheck\Model\DependencyChecker\Service
+ * @covers \DepCheck\Model\DependencyChecker\Rules
+ * @covers \DepCheck\Model\DependencyChecker\Element
+ * @covers \DepCheck\Model\DependencyChecker\Layer
+ * @covers \DepCheck\Model\DependencyChecker\Dependency
+ * @covers \DepCheck\Model\DependencyChecker\Result\Report
  *
  */
 class ServiceTest extends TestCase
 {
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\Allowed
-     * @covers \DepCheck\DependencyChecker\Result\Forbidden
+     * @covers \DepCheck\Model\DependencyChecker\Result\Allowed
+     * @covers \DepCheck\Model\DependencyChecker\Result\Forbidden
      */
     public function testComplex(): void
     {
@@ -69,7 +69,7 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\UnknownElement
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownElement
      */
     public function testTotal(): void
     {
@@ -84,7 +84,7 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\UnknownElement
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownElement
      */
     public function testUnknown(): void
     {
@@ -99,7 +99,7 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\Allowed
+     * @covers \DepCheck\Model\DependencyChecker\Result\Allowed
      */
     public function testAllowed(): void
     {
@@ -121,7 +121,7 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\Forbidden
+     * @covers \DepCheck\Model\DependencyChecker\Result\Forbidden
      */
     public function testForbidden(): void
     {
@@ -143,8 +143,8 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\UnknownElement
-     * @covers \DepCheck\DependencyChecker\Result\UnknownDependsOn
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownElement
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownDependsOn
      */
     public function testUnknownDependsOn(): void
     {
@@ -161,8 +161,8 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\UnknownElement
-     * @covers \DepCheck\DependencyChecker\Result\UnknownDependsOnUnknown
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownElement
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownDependsOnUnknown
      */
     public function testUnknownDependsOnUnknown(): void
     {
@@ -182,8 +182,8 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @covers \DepCheck\DependencyChecker\Result\UnknownElement
-     * @covers \DepCheck\DependencyChecker\Result\DependsOnUnknown
+     * @covers \DepCheck\Model\DependencyChecker\Result\UnknownElement
+     * @covers \DepCheck\Model\DependencyChecker\Result\DependsOnUnknown
      */
     public function testDependsOnUnknown(): void
     {

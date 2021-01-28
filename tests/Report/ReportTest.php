@@ -4,23 +4,23 @@ declare(strict_types=1);
 namespace Tests\Report;
 
 
-use DepCheck\DependencyChecker\Dependency;
-use DepCheck\DependencyChecker\Element;
-use DepCheck\DependencyChecker\Layer;
-use DepCheck\DependencyChecker\Position;
-use DepCheck\DependencyChecker\Result\Allowed;
-use DepCheck\DependencyChecker\Result\DependsOnUnknown;
-use DepCheck\DependencyChecker\Result\Forbidden;
-use DepCheck\DependencyChecker\Result\UnknownDependsOn;
-use DepCheck\DependencyChecker\Result\UnknownDependsOnUnknown;
-use DepCheck\DependencyChecker\Result\UnknownElement;
-use DepCheck\DependencyChecker\Rules;
-use DepCheck\DependencyChecker\Service;
-use DepCheck\Report\Report;
+use DepCheck\Model\DependencyChecker\Dependency;
+use DepCheck\Model\DependencyChecker\Element;
+use DepCheck\Model\DependencyChecker\Layer;
+use DepCheck\Model\DependencyChecker\Position;
+use DepCheck\Model\DependencyChecker\Result\Allowed;
+use DepCheck\Model\DependencyChecker\Result\DependsOnUnknown;
+use DepCheck\Model\DependencyChecker\Result\Forbidden;
+use DepCheck\Model\DependencyChecker\Result\UnknownDependsOn;
+use DepCheck\Model\DependencyChecker\Result\UnknownDependsOnUnknown;
+use DepCheck\Model\DependencyChecker\Result\UnknownElement;
+use DepCheck\Model\DependencyChecker\Rules;
+use DepCheck\Model\DependencyChecker\Service;
+use DepCheck\Model\Report\Report;
 
 /**
- * @covers \DepCheck\Report\Report
- * @covers \DepCheck\Report\Summary
+ * @covers \DepCheck\Model\Report\Report
+ * @covers \DepCheck\Model\Report\Summary
  */
 final class ReportTest extends \PHPUnit\Framework\TestCase
 {

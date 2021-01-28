@@ -4,19 +4,19 @@ declare(strict_types=1);
 namespace Tests\Report;
 
 
-use DepCheck\DependencyChecker\Dependency;
-use DepCheck\DependencyChecker\Element;
-use DepCheck\DependencyChecker\Layer;
-use DepCheck\DependencyChecker\Position;
-use DepCheck\DependencyChecker\Result\DependsOnUnknown;
-use DepCheck\DependencyChecker\Result\Forbidden;
-use DepCheck\Report\Violation;
-use DepCheck\Report\ViolationReport;
+use DepCheck\Model\DependencyChecker\Dependency;
+use DepCheck\Model\DependencyChecker\Element;
+use DepCheck\Model\DependencyChecker\Layer;
+use DepCheck\Model\DependencyChecker\Position;
+use DepCheck\Model\DependencyChecker\Result\DependsOnUnknown;
+use DepCheck\Model\DependencyChecker\Result\Forbidden;
+use DepCheck\Model\Report\Violation;
+use DepCheck\Model\Report\ViolationReport;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \DepCheck\Report\ViolationReport
- * @covers \DepCheck\Report\Violation
+ * @covers \DepCheck\Model\Report\ViolationReport
+ * @covers \DepCheck\Model\Report\Violation
  */
 final class ViolationReportTest extends TestCase
 {
