@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DepCheck\IO;
+namespace DepCheck\NodesCollector;
 
 
 use DepCheck\Model\Input\FileCollectorInterface;

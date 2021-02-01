@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DepCheck\IO;
+namespace DepCheck\NodesCollector;
 
 
 use PhpParser\Lexer;
@@ -38,7 +38,7 @@ final class NodeExtractor
         $collectorVisitor->setTokens($lexer->getTokens());
 
         $nodeTraverser->traverse($ast);
-        return $collectorVisitor->getNodes();
+        return $collectorVisitor->getCollectedNodes();
     }
 
 
