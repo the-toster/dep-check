@@ -7,13 +7,13 @@ namespace DepCheck\Model\Input;
 final class Node
 {
     public string $id;
-    /** @var string[] $depends */
+    /** @var NodeDependency[] $depends */
     public array $depends;
     public Properties $props;
 
     /**
      * @param string $id
-     * @param string[] $depends
+     * @param NodeDependency[] $depends
      * @param Properties $props
      */
     public function __construct(string $id, array $depends, Properties $props)
@@ -21,6 +21,11 @@ final class Node
         $this->id = $id;
         $this->depends = $depends;
         $this->props = $props;
+    }
+
+    public function addDependency(NodeDependency $retDep)
+    {
+        $this->depends[] = $retDep;
     }
 
 }

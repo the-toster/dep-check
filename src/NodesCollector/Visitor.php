@@ -56,34 +56,27 @@ final class Visitor extends NodeVisitorAbstract
 
         if ($node instanceof \PhpParser\Node\Stmt\Function_) {
             $this->handleFunctionDeclaration($node);
-//            var_dump($node->returnType);
         } else {
+
         }
     }
 
     private function handleFunctionDeclaration(\PhpParser\Node\Stmt\Function_ $node): void
     {
         $id = $this->getId($node->namespacedName);
-        $checkNode = $this->getNode($id);
+        $checkNode = $this->populateNode($id);
 
         foreach($node->params as $param) {
-            /** @var \PhpParser\Node\Name\FullyQualified $paramNode */
-            $paramNode = $this->getNode($this->getId($param));
-            $position = new Position($param->getLine(), $param->getStartTokenPos());
-            if($paramNode) {
-                $node->addParamDependency($paramNode, $position);
-            }
+            /** @var Node\Param $param */
+            $paramDep = $this->getDependency($param->type, NodeDependency::PARAM);
+            $checkNode->addDependency($paramDep);
         }
 
         if(isset($node->returnType)) {
-            $retNode = $this->getNode($this->getId($node->returnType));
-            if($retNode) {
-                $node->addReturnDependency($retNode, $position);
-            }
-            var_dump($node->returnType);
+            $retDep = $this->getDependency($node->returnType, NodeDependency::RETURN);
+            $checkNode->addDependency($retDep);
         }
 
-        $this->nodes[$id] = $node;
     }
 
     private function getId(Node\Name $name): string
@@ -91,19 +84,20 @@ final class Visitor extends NodeVisitorAbstract
         return implode('\\', $name->parts);
     }
 
-    private function getNode(string $id): CheckNode
+    private function populateNode(string $id): CheckNode
     {
-        $node = isset($this->nodes[$id]) ? $this->nodes[$id] :
-            new CheckNode($id, [], new Properties(''));
-
-        return $node;
+        if(isset($this->nodes[$id])) {
+            return $this->nodes[$id];
+        }
+        return $this->nodes[$id] = new CheckNode($id, [], new Properties(''));
     }
 
-    private function getDependency(Node\Name $name): NodeDependency
+    private function getDependency(Node\Name $name, int $type): NodeDependency
     {
         $id = $this->getId($name);
-        $node = $this->getNode($id);
-        $pos = new NodePosition($name->getLine(), $name->getStartTokenPos(), '');
-        return new NodeDependency($node, $pos);
+        $node = $this->populateNode($id);
+        var_dump($name);
+        $pos = new NodePosition($name->getLine(), 0, '');
+        return new NodeDependency($node, $pos, $type);
     }
 }
