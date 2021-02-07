@@ -29,9 +29,11 @@ final class NodesCollectorTest extends TestCase
 
         $argNode = $this->buildNode('ArgDep');
         $retNode = $this->buildNode('ReturnDep');
+        $funcCall = $this->buildNode('var_dump');
         $deps = [
             $this->buildDep($argNode, 3, 0, NodeDependency::PARAM),
-            $this->buildDep($retNode, 3, 0, NodeDependency::RETURN)
+            $this->buildDep($retNode, 3, 0, NodeDependency::RETURN),
+            $this->buildDep($funcCall, 5, 0, NodeDependency::CALL),
         ];
         $funcNode = $this->buildNode('test', $deps);
 
@@ -39,7 +41,8 @@ final class NodesCollectorTest extends TestCase
             [
                 'test' => $funcNode,
                 'ArgDep' => $argNode,
-                'ReturnDep' => $retNode
+                'ReturnDep' => $retNode,
+                'var_dump' => $funcCall
             ],
             $nodes
         );

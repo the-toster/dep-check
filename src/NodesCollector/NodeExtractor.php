@@ -8,8 +8,8 @@ namespace DepCheck\NodesCollector;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
 use PhpParser\ParserFactory;
-use PhpParser\Node\Stmt;
 use DepCheck\Model\Input\Node;
 use DepCheck\Model\Input\SourceFile;
 
@@ -29,6 +29,9 @@ final class NodeExtractor
         $nameResolver = new NameResolver();
         $nodeTraverser->addVisitor($nameResolver);
 
+        $parentResolver = new ParentConnectingVisitor();
+        $nodeTraverser->addVisitor($parentResolver);
+
         $collectorVisitor = new Visitor();
         $nodeTraverser->addVisitor($collectorVisitor);
 
@@ -38,7 +41,7 @@ final class NodeExtractor
         $collectorVisitor->setTokens($lexer->getTokens());
 
         $nodeTraverser->traverse($ast);
-        return $collectorVisitor->getCollectedNodes();
+        return $collectorVisitor->getNodes();
     }
 
 

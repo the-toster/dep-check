@@ -5,24 +5,61 @@ declare(strict_types=1);
 namespace DepCheck\NodesCollector;
 
 
-use DepCheck\Model\DependencyChecker\Dependency;
-use DepCheck\Model\DependencyChecker\Position;
 use DepCheck\Model\Input\Node as CheckNode;
-use DepCheck\Model\Input\NodeDependency;
-use DepCheck\Model\Input\NodePosition;
-use DepCheck\Model\Input\Properties;
+use DepCheck\NodesCollector\Handlers\FunctionCallHandler;
+use DepCheck\NodesCollector\Handlers\FunctionDeclarationHandler;
+use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use PhpParser\Node;
-use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeVisitorAbstract;
 
 final class Visitor extends NodeVisitorAbstract
 {
-    private array $nodes = [];
     private array $tokens;
+    private FunctionDeclarationHandler $functionDeclarationHandler;
+    private FunctionCallHandler $functionCallHandler;
 
-    public function getCollectedNodes(): array
+    /** @var AbstractHandler[] */
+    private array $handlers = [];
+
+    public function __construct()
     {
-        return $this->nodes;
+        $this->handlers = [
+            Function_::class => new FunctionDeclarationHandler(),
+            Node\Expr\FuncCall::class => new FunctionCallHandler()
+        ];
+    }
+
+    public function getNodes(): array
+    {
+        $nodes = [];
+        foreach ($this->handlers as $handelr) {
+            $nodes[] = $handelr->getNodes();
+        }
+
+        return $this->mergeNodes($nodes);
+    }
+
+    /**
+     * @param array<CheckNode[]> $nodes
+     * @return CheckNode[]
+     */
+    private function mergeNodes(array $nodes): array
+    {
+        $r = [];
+        foreach ($nodes as $part) {
+            foreach ($part as $id => $node) {
+                if (isset($r[$id])) {
+                    foreach ($node->depends as $dependency) {
+                        $r[$id]->depends[] = $dependency;
+                    }
+                } else {
+                    $r[$id] = $node;
+                }
+            }
+        }
+
+        return $r;
     }
 
     public function setTokens(array $tokens)
@@ -36,7 +73,7 @@ final class Visitor extends NodeVisitorAbstract
      *  - class
      *  - trait
      *  - interface
-     *  - function
+     *  ---- function
      *  - constant
      *
      *  ref types:
@@ -44,7 +81,8 @@ final class Visitor extends NodeVisitorAbstract
      *  - implements
      *  - use
      *  - use trait
-     *  - call method / function
+     *  - call method
+     *  - call function
      *  - read constant
      *  - param type hint
      *  - property type hint
@@ -53,51 +91,10 @@ final class Visitor extends NodeVisitorAbstract
      */
     public function leaveNode(Node $node)
     {
-
-        if ($node instanceof \PhpParser\Node\Stmt\Function_) {
-            $this->handleFunctionDeclaration($node);
-        } else {
-
+        $type = get_class($node);
+        if (isset($this->handlers[$type])) {
+            $this->handlers[$type]->handle($node);
         }
     }
 
-    private function handleFunctionDeclaration(\PhpParser\Node\Stmt\Function_ $node): void
-    {
-        $id = $this->getId($node->namespacedName);
-        $checkNode = $this->populateNode($id);
-
-        foreach($node->params as $param) {
-            /** @var Node\Param $param */
-            $paramDep = $this->getDependency($param->type, NodeDependency::PARAM);
-            $checkNode->addDependency($paramDep);
-        }
-
-        if(isset($node->returnType)) {
-            $retDep = $this->getDependency($node->returnType, NodeDependency::RETURN);
-            $checkNode->addDependency($retDep);
-        }
-
-    }
-
-    private function getId(Node\Name $name): string
-    {
-        return implode('\\', $name->parts);
-    }
-
-    private function populateNode(string $id): CheckNode
-    {
-        if(isset($this->nodes[$id])) {
-            return $this->nodes[$id];
-        }
-        return $this->nodes[$id] = new CheckNode($id, [], new Properties(''));
-    }
-
-    private function getDependency(Node\Name $name, int $type): NodeDependency
-    {
-        $id = $this->getId($name);
-        $node = $this->populateNode($id);
-        var_dump($name);
-        $pos = new NodePosition($name->getLine(), 0, '');
-        return new NodeDependency($node, $pos, $type);
-    }
 }

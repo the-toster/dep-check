@@ -12,6 +12,7 @@ final class NodeDependency
 
     public const PARAM  = 0;
     public const RETURN = 1;
+    public const CALL   = 2;
 
     public function __construct(Node $on, NodePosition $pos, int $type)
     {
