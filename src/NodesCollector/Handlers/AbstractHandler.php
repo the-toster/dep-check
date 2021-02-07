@@ -9,6 +9,8 @@ use DepCheck\Model\Input\NodeDependency;
 use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\UnionType;
 
 class AbstractHandler {
     /**
@@ -43,4 +45,26 @@ class AbstractHandler {
         return new NodeDependency($node, $pos, $type);
     }
 
+    protected function handleTypeOccurrence($type, Node $parent, int $depType): void
+    {
+        foreach ($this->getNames($type) as $name) {
+            $this->populateNode($this->getId($name));
+            $parent->addDependency($this->getDependency($name, $depType));
+        }
+    }
+
+    private function getNames($type): array
+    {
+        $r = [];
+        $types = $type instanceof Name ? [$type] : [];
+        $types = $type instanceof UnionType ? $type->types : $types;
+
+        foreach ($types as $t) {
+            if (get_class($t) instanceof Name) {
+                $r[] = $t;
+            }
+        }
+
+        return $r;
+    }
 }

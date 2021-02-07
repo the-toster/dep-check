@@ -9,7 +9,7 @@ use DepCheck\Model\Input\NodeDependency;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Function_;
 
-final class FunctionCallHandler extends AbstractHandler
+final class FunctionCall extends AbstractHandler
 {
     public function handle(FuncCall $node): void
     {

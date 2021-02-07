@@ -6,8 +6,10 @@ namespace DepCheck\NodesCollector;
 
 
 use DepCheck\Model\Input\Node as CheckNode;
-use DepCheck\NodesCollector\Handlers\FunctionCallHandler;
-use DepCheck\NodesCollector\Handlers\FunctionDeclarationHandler;
+use DepCheck\NodesCollector\Handlers\ClassDeclaration;
+use DepCheck\NodesCollector\Handlers\ClassProperty;
+use DepCheck\NodesCollector\Handlers\FunctionCall;
+use DepCheck\NodesCollector\Handlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Function_;
@@ -16,8 +18,8 @@ use PhpParser\NodeVisitorAbstract;
 final class Visitor extends NodeVisitorAbstract
 {
     private array $tokens;
-    private FunctionDeclarationHandler $functionDeclarationHandler;
-    private FunctionCallHandler $functionCallHandler;
+    private FunctionDeclaration $functionDeclarationHandler;
+    private FunctionCall $functionCallHandler;
 
     /** @var AbstractHandler[] */
     private array $handlers = [];
@@ -25,8 +27,11 @@ final class Visitor extends NodeVisitorAbstract
     public function __construct()
     {
         $this->handlers = [
-            Function_::class => new FunctionDeclarationHandler(),
-            Node\Expr\FuncCall::class => new FunctionCallHandler()
+            Function_::class => new FunctionDeclaration(),
+            Node\Expr\FuncCall::class => new FunctionCall(),
+            Node\Stmt\Class_::class => new ClassDeclaration(),
+            Node\Stmt\Property::class => new ClassProperty(),
+
         ];
     }
 
@@ -70,7 +75,9 @@ final class Visitor extends NodeVisitorAbstract
     /**
      * Collect nodes from AST:
      *  node types:
-     *  - class
+     *  ---- class
+     *  ---- class property
+     *  - class method
      *  - trait
      *  - interface
      *  ---- function
@@ -82,7 +89,8 @@ final class Visitor extends NodeVisitorAbstract
      *  - use
      *  - use trait
      *  - call method
-     *  - call function
+     *  ---- call function
+     *  - access class property
      *  - read constant
      *  - param type hint
      *  - property type hint
