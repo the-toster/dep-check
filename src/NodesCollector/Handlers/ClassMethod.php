@@ -17,11 +17,11 @@ final class ClassMethod extends AbstractHandler
         $classDecl = $node->getAttribute('parent');
         $parent = $this->populateNode($this->getId($classDecl->namespacedName));
         foreach($node->params as $param) {
-            $this->handleTypeOccurrence($param->type, $classDecl, NodeDependency::PARAM);
+            $this->handleTypeOccurrence($param->type, $parent, NodeDependency::PARAM);
         }
 
         if(isset($node->returnType)) {
-            $this->handleTypeOccurrence($node->returnType, $classDecl, NodeDependency::RETURN);
+            $this->handleTypeOccurrence($node->returnType, $parent, NodeDependency::RETURN);
         }
     }
 }

@@ -13,7 +13,7 @@ use DepCheck\Model\Input\SourceFile;
 use DepCheck\NodesCollector\NodeExtractor;
 use PHPUnit\Framework\TestCase;
 
-final class BasicIntegrationTest extends TestCase
+final class FuncCallTest extends AbstractIntegrationTest
 {
     /**
      * @covers \DepCheck\NodesCollector\Visitor
@@ -31,9 +31,9 @@ final class BasicIntegrationTest extends TestCase
         $retNode = $this->buildNode('ReturnDep');
         $funcCall = $this->buildNode('var_dump');
         $deps = [
+            $this->buildDep($funcCall, 5, 0, NodeDependency::CALL),
             $this->buildDep($argNode, 3, 0, NodeDependency::PARAM),
             $this->buildDep($retNode, 3, 0, NodeDependency::RETURN),
-            $this->buildDep($funcCall, 5, 0, NodeDependency::CALL),
         ];
         $funcNode = $this->buildNode('test', $deps);
 
@@ -48,22 +48,9 @@ final class BasicIntegrationTest extends TestCase
         );
     }
 
-    private function buildDep(Node $node, int $line, int $col, int $type): NodeDependency
-    {
-        return new NodeDependency($node, new NodePosition($line, $col, ''), $type);
-    }
 
-    /**
-     * @param string $id
-     * @param NodeDependency[] $deps
-     * @return Node
-     */
-    private function buildNode($id, $deps = []): Node
-    {
-        return new Node($id, $deps, new Properties(''));
-    }
 
-    private function getTestContent(): string
+    protected function getTestContent(): string
     {
         return <<<'CODE'
 <?php
