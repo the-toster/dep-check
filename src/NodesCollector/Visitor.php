@@ -7,6 +7,7 @@ namespace DepCheck\NodesCollector;
 
 use DepCheck\Model\Input\Node as CheckNode;
 use DepCheck\NodesCollector\Handlers\ClassDeclaration;
+use DepCheck\NodesCollector\Handlers\ClassMethod;
 use DepCheck\NodesCollector\Handlers\ClassProperty;
 use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\FunctionDeclaration;
@@ -27,11 +28,11 @@ final class Visitor extends NodeVisitorAbstract
     public function __construct()
     {
         $this->handlers = [
-            Function_::class => new FunctionDeclaration(),
-            Node\Expr\FuncCall::class => new FunctionCall(),
             Node\Stmt\Class_::class => new ClassDeclaration(),
+            Node\Stmt\ClassMethod::class => new ClassMethod(),
             Node\Stmt\Property::class => new ClassProperty(),
-
+            Node\Expr\FuncCall::class => new FunctionCall(),
+            Function_::class => new FunctionDeclaration(),
         ];
     }
 
@@ -74,28 +75,46 @@ final class Visitor extends NodeVisitorAbstract
 
     /**
      * Collect nodes from AST:
-     *  node types:
-     *  ---- class
-     *  ---- class property
-     *  - class method
-     *  - trait
-     *  - interface
-     *  ---- function
-     *  - constant
+     *  node types & ref sources:
+     *  - global constant
+     *      - global constant name node
      *
-     *  ref types:
-     *  - extends
-     *  - implements
-     *  - use
-     *  - use trait
-     *  - call method
-     *  ---- call function
-     *  - access class property
-     *  - read constant
-     *  - param type hint
-     *  - property type hint
-     *  - return type hint
-     *  - docblock type hint
+     *  - function -- done
+     *      - declaration  -- done
+     *      - call -- done
+     *
+     *  - class
+     *      - declaration -- done
+     *
+     *      - function params -- done
+     *      - function return type -- done
+     *      - function docblock
+     *      - method params -- done
+     *      - method return type -- done
+     *      - method docblock
+     *
+     *      - extends
+     *      - method call
+     *      - property access
+     *      - constant access
+     *      - instantiation
+     *
+     *  - interface
+     *      - declaration
+     *
+     *      - function params -- done
+     *      - function return type -- done
+     *      - function docblock
+     *      - method params -- done
+     *      - method return type -- done
+     *      - method docblock
+     *
+     *      - implements
+     *      - extends
+     *  - trait
+     *      - declaration
+     *      - use statement
+     *
      */
     public function leaveNode(Node $node)
     {

@@ -60,7 +60,7 @@ class AbstractHandler {
         $types = $type instanceof UnionType ? $type->types : $types;
 
         foreach ($types as $t) {
-            if (get_class($t) instanceof Name) {
+            if ($t instanceof Name) {
                 $r[] = $t;
             }
         }

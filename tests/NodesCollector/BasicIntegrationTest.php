@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace Tests\NodesCollector;
 
 
 use DepCheck\Model\Input\Node;
@@ -13,7 +13,7 @@ use DepCheck\Model\Input\SourceFile;
 use DepCheck\NodesCollector\NodeExtractor;
 use PHPUnit\Framework\TestCase;
 
-final class NodesCollectorTest extends TestCase
+final class BasicIntegrationTest extends TestCase
 {
     /**
      * @covers \DepCheck\NodesCollector\Visitor
