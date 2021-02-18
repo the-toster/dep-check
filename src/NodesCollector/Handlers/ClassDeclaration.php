@@ -11,7 +11,6 @@ final class ClassDeclaration extends AbstractHandler
 {
     public function handle(Class_ $node): void
     {
-        $id = $this->getId($node->namespacedName);
-        $this->populateNode($id);
+        $this->populateNode($node);
     }
 }

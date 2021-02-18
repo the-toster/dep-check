@@ -15,7 +15,7 @@ final class ClassMethod extends AbstractHandler
     {
         /** @var Class_ $classDecl */
         $classDecl = $node->getAttribute('parent');
-        $parent = $this->populateNode($this->getId($classDecl->namespacedName));
+        $parent = $this->populateNode($classDecl);
         foreach($node->params as $param) {
             $this->handleTypeOccurrence($param->type, $parent, NodeDependency::PARAM);
         }

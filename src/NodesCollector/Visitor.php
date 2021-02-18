@@ -12,6 +12,7 @@ use DepCheck\NodesCollector\Handlers\ClassProperty;
 use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
+use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeVisitorAbstract;
@@ -19,8 +20,6 @@ use PhpParser\NodeVisitorAbstract;
 final class Visitor extends NodeVisitorAbstract
 {
     private array $tokens;
-    private FunctionDeclaration $functionDeclarationHandler;
-    private FunctionCall $functionCallHandler;
 
     /** @var AbstractHandler[] */
     private array $handlers = [];
@@ -33,14 +32,15 @@ final class Visitor extends NodeVisitorAbstract
             Node\Stmt\Property::class => new ClassProperty(),
             Node\Expr\FuncCall::class => new FunctionCall(),
             Function_::class => new FunctionDeclaration(),
+            Node\Stmt\Const_::class => new GlobalConstantHandler()
         ];
     }
 
     public function getNodes(): array
     {
         $nodes = [];
-        foreach ($this->handlers as $handelr) {
-            $nodes[] = $handelr->getNodes();
+        foreach ($this->handlers as $handler) {
+            $nodes[] = $handler->getNodes();
         }
 
         return $this->mergeNodes($nodes);
@@ -119,7 +119,10 @@ final class Visitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         $type = get_class($node);
+        echo $type."\n";
         if (isset($this->handlers[$type])) {
+            echo get_class($this->handlers[$type])."\n";
+
             $this->handlers[$type]->handle($node);
         }
     }

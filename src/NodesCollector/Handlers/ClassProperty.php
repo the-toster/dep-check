@@ -13,14 +13,11 @@ final class ClassProperty extends AbstractHandler
 {
     public function handle(Property $node): void
     {
-        $class = $this->getParent($node);
-        $classNode = $this->populateNode($this->getId($class->namespacedName));
+        $class = $node->getAttribute('parent');
+
+        $classNode = $this->populateNode($class);
 
         $this->handleTypeOccurrence($node->type, $classNode, NodeDependency::PROPERTY);
     }
 
-    private function getParent(Property $node): Class_
-    {
-        return $node->getAttribute('parent');
-    }
 }

@@ -11,8 +11,7 @@ final class FunctionDeclaration extends AbstractHandler
 {
     public function handle(Function_ $node): void
     {
-        $id = $this->getId($node->namespacedName);
-        $funcDecl = $this->populateNode($id);
+        $funcDecl = $this->populateNode($node);
 
         foreach($node->params as $param) {
             $this->handleTypeOccurrence($param->type, $funcDecl, NodeDependency::PARAM);
