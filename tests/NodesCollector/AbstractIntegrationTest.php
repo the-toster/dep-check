@@ -29,5 +29,5 @@ abstract class AbstractIntegrationTest extends TestCase
         return new Node($id, $deps, new Properties(''));
     }
 
-    abstract protected function getTestContent(): string;
+    abstract protected function getFuncTestContent(): string;
 }

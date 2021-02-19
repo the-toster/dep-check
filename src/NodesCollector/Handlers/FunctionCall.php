@@ -15,7 +15,7 @@ final class FunctionCall extends AbstractHandler
         $this->populateNode($node);
         $parent = $this->findContext($node);
         if ($parent) {
-            $dependency = $this->getDependency($node->name, NodeDependency::CALL);
+            $dependency = $this->getDependency($node, NodeDependency::CALL);
             $parent->addDependency($dependency);
         }
     }

@@ -11,16 +11,11 @@ use DepCheck\NodesCollector\NodeExtractor;
 
 final class ConstTest extends AbstractIntegrationTest
 {
-    /**
-     * @covers \DepCheck\NodesCollector\Visitor
-     * @covers \DepCheck\NodesCollector\NodeExtractor
-     * @test
-     */
+
+    /** @test */
     public function it_collects_function_dependency_on_const(): void
     {
-        //function declaration can depends by arguments and return type
-        //also, it is node itself, something other can depends on it
-        $file = new SourceFile('name', $this->getTestContent());
+        $file = new SourceFile('name', $this->getFuncTestContent());
         $nodes = (new NodeExtractor())->extract($file);
 
         $const = $this->buildNode('CONST_NAME');
@@ -42,8 +37,7 @@ final class ConstTest extends AbstractIntegrationTest
     }
 
 
-
-    protected function getTestContent(): string
+    protected function getFuncTestContent(): string
     {
         return <<<'CODE'
 <?php

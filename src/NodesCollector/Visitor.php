@@ -6,13 +6,17 @@ namespace DepCheck\NodesCollector;
 
 
 use DepCheck\Model\Input\Node as CheckNode;
+use DepCheck\NodesCollector\Handlers\ClassConstantHandler;
 use DepCheck\NodesCollector\Handlers\ClassDeclaration;
+use DepCheck\NodesCollector\Handlers\ClassInstantiationHandler;
 use DepCheck\NodesCollector\Handlers\ClassMethod;
 use DepCheck\NodesCollector\Handlers\ClassProperty;
 use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
+use DepCheck\NodesCollector\Handlers\StaticMethodCallHandler;
+use DepCheck\NodesCollector\Handlers\StaticPropertyHandler;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeVisitorAbstract;
@@ -32,7 +36,11 @@ final class Visitor extends NodeVisitorAbstract
             Node\Stmt\Property::class => new ClassProperty(),
             Node\Expr\FuncCall::class => new FunctionCall(),
             Function_::class => new FunctionDeclaration(),
-            Node\Stmt\Const_::class => new GlobalConstantHandler()
+            Node\Expr\ConstFetch::class => new GlobalConstantHandler(),
+            Node\Expr\ClassConstFetch::class => new ClassConstantHandler(),
+            Node\Expr\StaticCall::class => new StaticMethodCallHandler(),
+            Node\Expr\StaticPropertyFetch::class => new StaticPropertyHandler(),
+            Node\Expr\New_::class => new ClassInstantiationHandler()
         ];
     }
 
@@ -77,39 +85,41 @@ final class Visitor extends NodeVisitorAbstract
      * Collect nodes from AST:
      *  node types & ref sources:
      *  - global constant
-     *      - global constant name node
+     *      - global constant fetch -- done
      *
-     *  - function -- done
-     *      - declaration  -- done
-     *      - call -- done
+     *  - function                  -- done
+     *      - declaration           -- done
+     *      - call                  -- done
      *
      *  - class
-     *      - declaration -- done
+     *      - declaration           -- done
      *
-     *      - function params -- done
-     *      - function return type -- done
+     *      - function params       -- done
+     *      - function return type  -- done
      *      - function docblock
-     *      - method params -- done
-     *      - method return type -- done
+     *      - method params         -- done
+     *      - method return type    -- done
      *      - method docblock
      *
-     *      - extends
-     *      - method call
-     *      - property access
-     *      - constant access
-     *      - instantiation
+     *      - extends               -- done
+     *      - static method call    -- done
+     *      - static property access -- done
+     *      - method call           -- very problematic
+     *      - property access       -- very problematic
+     *      - constant access       -- done
+     *      - instantiation         -- done
      *
      *  - interface
      *      - declaration
      *
-     *      - function params -- done
-     *      - function return type -- done
+     *      - function params       -- done
+     *      - function return type  -- done
      *      - function docblock
-     *      - method params -- done
-     *      - method return type -- done
+     *      - method params         -- done
+     *      - method return type    -- done
      *      - method docblock
      *
-     *      - implements
+     *      - implements            -- done
      *      - extends
      *  - trait
      *      - declaration
@@ -119,10 +129,9 @@ final class Visitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         $type = get_class($node);
-        echo $type."\n";
+//        echo $type."\n";
         if (isset($this->handlers[$type])) {
-            echo get_class($this->handlers[$type])."\n";
-
+//            echo get_class($this->handlers[$type])."\n";
             $this->handlers[$type]->handle($node);
         }
     }

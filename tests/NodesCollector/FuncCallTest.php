@@ -24,7 +24,7 @@ final class FuncCallTest extends AbstractIntegrationTest
     {
         //function declaration can depends by arguments and return type
         //also, it is node itself, something other can depends on it
-        $file = new SourceFile('name', $this->getTestContent());
+        $file = new SourceFile('name', $this->getFuncTestContent());
         $nodes = (new NodeExtractor())->extract($file);
 
         $argNode = $this->buildNode('ArgDep');
@@ -50,7 +50,7 @@ final class FuncCallTest extends AbstractIntegrationTest
 
 
 
-    protected function getTestContent(): string
+    protected function getFuncTestContent(): string
     {
         return <<<'CODE'
 <?php
