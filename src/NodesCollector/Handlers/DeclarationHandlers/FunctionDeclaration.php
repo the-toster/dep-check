@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DepCheck\NodesCollector\Handlers;
+namespace DepCheck\NodesCollector\Handlers\DeclarationHandlers;
 
 use DepCheck\Model\Input\NodeDependency;
+use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use PhpParser\Node\Stmt\Function_;
 
 final class FunctionDeclaration extends AbstractHandler

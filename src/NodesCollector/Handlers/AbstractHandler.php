@@ -56,4 +56,11 @@ class AbstractHandler
         return $node ? $this->populateNode($node) : null;
     }
 
+    protected function handleRef($node, $depType): void
+    {
+        $parent = $this->findContext($node);
+        if ($parent) {
+            $parent->addDependency($this->getDependency($node, $depType));
+        }
+    }
 }

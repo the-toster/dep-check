@@ -7,14 +7,15 @@ namespace DepCheck\NodesCollector;
 
 use DepCheck\Model\Input\Node as CheckNode;
 use DepCheck\NodesCollector\Handlers\ClassConstantHandler;
-use DepCheck\NodesCollector\Handlers\ClassDeclaration;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassDeclaration;
 use DepCheck\NodesCollector\Handlers\ClassInstantiationHandler;
-use DepCheck\NodesCollector\Handlers\ClassMethod;
-use DepCheck\NodesCollector\Handlers\ClassProperty;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassProperty;
 use DepCheck\NodesCollector\Handlers\FunctionCall;
-use DepCheck\NodesCollector\Handlers\FunctionDeclaration;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
+use DepCheck\NodesCollector\Handlers\RefHandler;
 use DepCheck\NodesCollector\Handlers\StaticMethodCallHandler;
 use DepCheck\NodesCollector\Handlers\StaticPropertyHandler;
 use PhpParser\Node;
@@ -30,17 +31,22 @@ final class Visitor extends NodeVisitorAbstract
 
     public function __construct()
     {
+        $refHandler = new RefHandler();
         $this->handlers = [
             Node\Stmt\Class_::class => new ClassDeclaration(),
             Node\Stmt\ClassMethod::class => new ClassMethod(),
             Node\Stmt\Property::class => new ClassProperty(),
-            Node\Expr\FuncCall::class => new FunctionCall(),
             Function_::class => new FunctionDeclaration(),
-            Node\Expr\ConstFetch::class => new GlobalConstantHandler(),
-            Node\Expr\ClassConstFetch::class => new ClassConstantHandler(),
-            Node\Expr\StaticCall::class => new StaticMethodCallHandler(),
-            Node\Expr\StaticPropertyFetch::class => new StaticPropertyHandler(),
-            Node\Expr\New_::class => new ClassInstantiationHandler()
+
+            Node\Expr\FuncCall::class => $refHandler,
+            Node\Expr\ConstFetch::class => $refHandler,
+            Node\Expr\New_::class => $refHandler,
+        ];
+
+        $this->classRefs = [
+            Node\Expr\ClassConstFetch::class,
+            Node\Expr\StaticCall::class,
+            Node\Expr\StaticPropertyFetch::class,
         ];
     }
 

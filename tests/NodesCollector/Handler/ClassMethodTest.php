@@ -9,7 +9,7 @@ use DepCheck\Model\Input\Node;
 use DepCheck\Model\Input\NodeDependency;
 use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
-use DepCheck\NodesCollector\Handlers\ClassMethod as ClassMethodHandler;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod as ClassMethodHandler;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
@@ -18,7 +18,7 @@ use PhpParser\Node\Stmt\ClassMethod as ClassMethodNode;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \DepCheck\NodesCollector\Handlers\ClassMethod
+ * @covers \DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod
  */
 final class ClassMethodTest extends TestCase
 {

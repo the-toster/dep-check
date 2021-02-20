@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DepCheck\NodesCollector\Handlers;
+namespace DepCheck\NodesCollector\Handlers\DeclarationHandlers;
 
 
 use DepCheck\Model\Input\NodeDependency;
-use PhpParser\Node\Stmt\Class_;
+use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use PhpParser\Node\Stmt\Property;
 
 final class ClassProperty extends AbstractHandler
