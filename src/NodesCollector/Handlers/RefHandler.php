@@ -21,17 +21,18 @@ final class RefHandler extends AbstractHandler
         ConstFetch::class => NodeDependency::GLOBAL_CONST,
     ];
 
-    public function isSupported(Node $node): bool
+    public function isSupported(string $type): bool
     {
-        return isset($this->supportedTypes[get_class($node)]);
+        return isset($this->supportedTypes[$type]);
     }
 
     public function handle(Node $node): void
     {
-        if(!$this->isSupported($node)) {
+        $type = get_class($node);
+        if(!$this->isSupported($type)) {
             throw new \InvalidArgumentException('Unsupported node');
         }
-        $depType = $this->supportedTypes[get_class($node)];
+        $depType = $this->supportedTypes[$type];
 
         $this->handleRef($node, $depType);
     }

@@ -10,11 +10,13 @@ use DepCheck\Model\Input\NodeDependency;
 use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod as ClassMethodHandler;
+use DepCheck\NodesCollector\Handlers\NodeCollection;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod as ClassMethodNode;
+use PhpParser\Node\UnionType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,17 +29,27 @@ final class ClassMethodTest extends TestCase
     /** @test */
     public function it_collects_return_type(): void
     {
-        $method = new ClassMethodNode('method1', [], ['parent'=>$this->getParent()]);
-        $method->returnType = new Name('RetType');
+        $method = new ClassMethodNode('method1', [
+            'params'=>[new Param('p', null, new Name('p1'))],
+            'returnType' => new UnionType([new Name('r1'), new Name('r2')])
+        ], ['parent'=>$this->getParent()]);
 
-        $handler = new ClassMethodHandler();
+        $handler = new ClassMethodHandler(new NodeCollection());
         $handler->handle($method);
 
-        $ret = $this->buildNode('RetType');
-        $deps = [$this->buildDep($ret, -1, 0, NodeDependency::RETURN)];
+        $p1 = $this->buildNode('p1');
+        $r1 = $this->buildNode('r1');
+        $r2 = $this->buildNode('r2');
+        $deps = [
+            $this->buildDep($p1, -1, 0, NodeDependency::PARAM),
+            $this->buildDep($r1, -1, 0, NodeDependency::RETURN),
+            $this->buildDep($r2, -1, 0, NodeDependency::RETURN)
+        ];
         $r = [
             'someClass'=>$this->buildNode('someClass', $deps),
-            'RetType' => $ret
+            'p1' => $p1,
+            'r1' => $r1,
+            'r2' => $r2
         ];
 
         $this->assertEquals($r, $handler->getNodes());
@@ -53,7 +65,7 @@ final class ClassMethodTest extends TestCase
             new Param(new Variable('p2'), null, new Name('Param2')),
         ];
 
-        $handler = new ClassMethodHandler();
+        $handler = new ClassMethodHandler(new NodeCollection());
         $handler->handle($method);
 
         $p1 = $this->buildNode('Param1');
@@ -77,7 +89,7 @@ final class ClassMethodTest extends TestCase
     {
         $method = new ClassMethodNode('method1', [], ['parent'=>$this->getParent()]);
 
-        $handler = new ClassMethodHandler();
+        $handler = new ClassMethodHandler(new NodeCollection());
         $handler->handle($method);
 
 

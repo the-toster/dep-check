@@ -7,6 +7,7 @@ namespace DepCheck\NodesCollector;
 
 use DepCheck\Model\Input\Node as CheckNode;
 use DepCheck\NodesCollector\Handlers\ClassConstantHandler;
+use DepCheck\NodesCollector\Handlers\ClassRefHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassDeclaration;
 use DepCheck\NodesCollector\Handlers\ClassInstantiationHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod;
@@ -15,6 +16,7 @@ use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
+use DepCheck\NodesCollector\Handlers\NodeCollection;
 use DepCheck\NodesCollector\Handlers\RefHandler;
 use DepCheck\NodesCollector\Handlers\StaticMethodCallHandler;
 use DepCheck\NodesCollector\Handlers\StaticPropertyHandler;
@@ -29,35 +31,33 @@ final class Visitor extends NodeVisitorAbstract
     /** @var AbstractHandler[] */
     private array $handlers = [];
 
+    private NodeCollection $nodes;
+
     public function __construct()
     {
-        $refHandler = new RefHandler();
+        $this->nodes = new NodeCollection();
+        $classRefHandler = new ClassRefHandler($this->nodes);
+        $refHandler = new RefHandler($this->nodes);
         $this->handlers = [
-            Node\Stmt\Class_::class => new ClassDeclaration(),
-            Node\Stmt\ClassMethod::class => new ClassMethod(),
-            Node\Stmt\Property::class => new ClassProperty(),
-            Function_::class => new FunctionDeclaration(),
+            Node\Stmt\Class_::class => new ClassDeclaration($this->nodes),
+            Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes),
+            Node\Stmt\Property::class => new ClassProperty($this->nodes),
+            Function_::class => new FunctionDeclaration($this->nodes),
 
-            Node\Expr\FuncCall::class => $refHandler,
             Node\Expr\ConstFetch::class => $refHandler,
+            Node\Expr\FuncCall::class => $refHandler,
             Node\Expr\New_::class => $refHandler,
+
+            Node\Expr\ClassConstFetch::class => $classRefHandler,
+            Node\Expr\StaticCall::class => $classRefHandler,
+            Node\Expr\StaticPropertyFetch::class => $classRefHandler,
         ];
 
-        $this->classRefs = [
-            Node\Expr\ClassConstFetch::class,
-            Node\Expr\StaticCall::class,
-            Node\Expr\StaticPropertyFetch::class,
-        ];
     }
 
     public function getNodes(): array
     {
-        $nodes = [];
-        foreach ($this->handlers as $handler) {
-            $nodes[] = $handler->getNodes();
-        }
-
-        return $this->mergeNodes($nodes);
+        return $this->nodes->toArray();
     }
 
     /**

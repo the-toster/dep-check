@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  * @covers \DepCheck\Model\DependencyChecker\Layer
  * @covers \DepCheck\Model\DependencyChecker\Dependency
  * @covers \DepCheck\Model\DependencyChecker\Result\Report
+ * @covers \DepCheck\Model\DependencyChecker\Position
  *
  */
 class ServiceTest extends TestCase

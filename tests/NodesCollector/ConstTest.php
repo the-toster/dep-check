@@ -21,8 +21,8 @@ final class ConstTest extends AbstractIntegrationTest
         $const = $this->buildNode('CONST_NAME');
         $funcCall = $this->buildNode('var_dump');
         $deps = [
+            $this->buildDep($const, 5, 0, NodeDependency::GLOBAL_CONST),
             $this->buildDep($funcCall, 5, 0, NodeDependency::CALL),
-            $this->buildDep($const, 5, 0, NodeDependency::GLOBAL_CONST)
         ];
         $funcNode = $this->buildNode('test', $deps);
 

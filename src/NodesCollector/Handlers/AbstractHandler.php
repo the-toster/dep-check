@@ -17,25 +17,30 @@ class AbstractHandler
 {
 
     private ParserService $parser;
-    private array $nodes = [];
+    private NodeCollection $nodes;
 
-    public function __construct()
+    public function __construct(NodeCollection $nodes)
     {
         $this->parser = new ParserService();
+        $this->nodes = $nodes;
     }
 
     public function getNodes(): array
     {
-        return $this->nodes;
+        return $this->nodes->toArray();
     }
 
     protected function populateNode(Node $node): InputNode
     {
         $id = $this->parser->extractId($node);
-        if (isset($this->nodes[$id])) {
-            return $this->nodes[$id];
+        if ($this->nodes->has($id)) {
+            return $this->nodes->get($id);
         }
-        return $this->nodes[$id] = new InputNode($id, [], new Properties(''));
+
+        $newNode = new InputNode($id, [], new Properties(''));
+        $this->nodes->set($newNode);
+
+        return $newNode;
     }
 
     protected function handleTypeOccurrence($type, InputNode $parent, int $depType): void
