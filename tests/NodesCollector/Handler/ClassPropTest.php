@@ -22,22 +22,25 @@ final class ClassPropTest extends TestCase
     public function it_collects_prop_type(): void
     {
         $handler = new ClassProperty(new NodeCollection());
-        $prop = new Property(0,
-                             [new PropertyProperty('name')],
-                             ['parent'=>new Name('SomeClass')],
-
+        $prop = new Property(
+            0,
+            [new PropertyProperty('name')],
+            ['parent' => new Name('SomeClass')],
+            new Name('t1')
         );
 
+        $propType = $this->buildNode('t1');
+        $dep = $this->buildDep($propType, NodeDependency::PROPERTY);
         $expected = [
-            'SomeClass' => $this->buildNode('SomeClass', []),
-            ''
+            'SomeClass' => $this->buildNode('SomeClass', [$dep]),
+            't1' => $propType
         ];
 
         $handler->handle($prop);
         $this->assertEquals($expected, $handler->getNodes());
     }
 
-    protected function buildDep(Node $node, int $line, int $col, int $type): NodeDependency
+    protected function buildDep(Node $node, int $type, int $line = -1, int $col = 0): NodeDependency
     {
         return new NodeDependency($node, new NodePosition($line, $col, ''), $type);
     }

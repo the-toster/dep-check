@@ -60,28 +60,6 @@ final class Visitor extends NodeVisitorAbstract
         return $this->nodes->toArray();
     }
 
-    /**
-     * @param array<CheckNode[]> $nodes
-     * @return CheckNode[]
-     */
-    private function mergeNodes(array $nodes): array
-    {
-        $r = [];
-        foreach ($nodes as $part) {
-            foreach ($part as $id => $node) {
-                if (isset($r[$id])) {
-                    foreach ($node->depends as $dependency) {
-                        $r[$id]->depends[] = $dependency;
-                    }
-                } else {
-                    $r[$id] = $node;
-                }
-            }
-        }
-
-        return $r;
-    }
-
     public function setTokens(array $tokens)
     {
         $this->tokens = $tokens;
