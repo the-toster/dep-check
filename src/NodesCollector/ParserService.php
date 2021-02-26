@@ -34,6 +34,7 @@ final class ParserService
     {
         $r = [];
         $types = $type instanceof Name ? [$type] : [];
+        $types = $type instanceof Node\NullableType ? [$type->type] : $types;
         $types = $type instanceof UnionType ? $type->types : $types;
 
         foreach ($types as $t) {

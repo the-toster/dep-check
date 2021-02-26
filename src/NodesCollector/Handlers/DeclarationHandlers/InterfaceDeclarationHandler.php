@@ -12,7 +12,7 @@ final class InterfaceDeclarationHandler extends \DepCheck\NodesCollector\Handler
 {
     public function handle(Interface_ $node): void
     {
-        $interface = $this->populateNode($node->name);
+        $interface = $this->populateNode($node->namespacedName);
 
         foreach ($node->extends as $extend) {
             $this->handleTypeOccurrence($extend, $interface, NodeDependency::EXTENDS_INTERFACE);

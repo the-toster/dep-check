@@ -12,6 +12,7 @@ use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassDeclaration;
 use DepCheck\NodesCollector\Handlers\ClassInstantiationHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassProperty;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\InterfaceDeclarationHandler;
 use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
@@ -43,7 +44,7 @@ final class Visitor extends NodeVisitorAbstract
             Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes),
             Node\Stmt\Property::class => new ClassProperty($this->nodes),
             Function_::class => new FunctionDeclaration($this->nodes),
-
+            Node\Stmt\Interface_::class => new InterfaceDeclarationHandler($this->nodes),
             Node\Expr\ConstFetch::class => $refHandler,
             Node\Expr\FuncCall::class => $refHandler,
             Node\Expr\New_::class => $refHandler,
@@ -65,7 +66,17 @@ final class Visitor extends NodeVisitorAbstract
         $this->tokens = $tokens;
     }
 
+
     /**
+     *
+     * Node types:
+     *  - Class
+     *  - Interface
+     *  - Trait
+     *  - Function
+     *  - Global Constant
+     *
+     *
      * Collect nodes from AST:
      *  node types & ref sources:
      *  - global constant
@@ -105,6 +116,7 @@ final class Visitor extends NodeVisitorAbstract
      *
      *      - implements            -- done
      *      - extends
+     *
      *  - trait
      *      - declaration
      *      - use statement
