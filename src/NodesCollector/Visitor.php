@@ -13,6 +13,7 @@ use DepCheck\NodesCollector\Handlers\ClassInstantiationHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassProperty;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\InterfaceDeclarationHandler;
+use DepCheck\NodesCollector\Handlers\DeclarationHandlers\TraitDeclaration;
 use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
@@ -20,8 +21,7 @@ use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
 use DepCheck\NodesCollector\Handlers\GlobalConstHandler;
 use DepCheck\NodesCollector\Handlers\NodeCollection;
 use DepCheck\NodesCollector\Handlers\RefHandler;
-use DepCheck\NodesCollector\Handlers\StaticMethodCallHandler;
-use DepCheck\NodesCollector\Handlers\StaticPropertyHandler;
+use DepCheck\NodesCollector\Handlers\TraitUseHandler;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeVisitorAbstract;
@@ -38,9 +38,9 @@ final class Visitor extends NodeVisitorAbstract
     public function __construct()
     {
         $this->nodes = new NodeCollection();
-        $classRefHandler = new ClassRefHandler($this->nodes);
+        $classRef = new ClassRefHandler($this->nodes);
         $refHandler = new RefHandler($this->nodes);
-        $constFetchHandler = new GlobalConstHandler($this->nodes);
+
         $this->handlers = [
             Node\Stmt\Class_::class => new ClassDeclaration($this->nodes),
             Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes),
@@ -50,11 +50,14 @@ final class Visitor extends NodeVisitorAbstract
             Node\Expr\FuncCall::class => $refHandler,
             Node\Expr\New_::class => $refHandler,
 
-            Node\Expr\ConstFetch::class => $constFetchHandler,
+            Node\Expr\ConstFetch::class => new GlobalConstHandler($this->nodes),
 
-            Node\Expr\ClassConstFetch::class => $classRefHandler,
-            Node\Expr\StaticCall::class => $classRefHandler,
-            Node\Expr\StaticPropertyFetch::class => $classRefHandler,
+            Node\Expr\ClassConstFetch::class => $classRef,
+            Node\Expr\StaticCall::class => $classRef,
+            Node\Expr\StaticPropertyFetch::class => $classRef,
+
+            Node\Stmt\Trait_::class => new TraitDeclaration($this->nodes),
+            Node\Stmt\TraitUse::class => new TraitUseHandler($this->nodes)
         ];
 
     }
@@ -108,7 +111,7 @@ final class Visitor extends NodeVisitorAbstract
      *      - instantiation         -- done
      *
      *  - interface
-     *      - declaration
+     *      - declaration           -- done
      *
      *      - function params       -- done
      *      - function return type  -- done
@@ -118,11 +121,11 @@ final class Visitor extends NodeVisitorAbstract
      *      - method docblock
      *
      *      - implements            -- done
-     *      - extends
+     *      - extends               -- done
      *
      *  - trait
-     *      - declaration
-     *      - use statement
+     *      - declaration           -- done
+     *      - use statement         -- done
      *
      */
     public function leaveNode(Node $node)

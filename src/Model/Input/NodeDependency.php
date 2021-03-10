@@ -20,6 +20,7 @@ final class NodeDependency
     public const IMPLEMENTS     = 7;
     public const INSTANTIATE    = 8;
     public const EXTENDS_INTERFACE    = 9;
+    public const USES_TRAIT    = 10;
 
     public function __construct(Node $on, NodePosition $pos, int $type)
     {
