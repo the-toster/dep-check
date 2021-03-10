@@ -17,6 +17,7 @@ use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
 use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
+use DepCheck\NodesCollector\Handlers\GlobalConstHandler;
 use DepCheck\NodesCollector\Handlers\NodeCollection;
 use DepCheck\NodesCollector\Handlers\RefHandler;
 use DepCheck\NodesCollector\Handlers\StaticMethodCallHandler;
@@ -39,15 +40,17 @@ final class Visitor extends NodeVisitorAbstract
         $this->nodes = new NodeCollection();
         $classRefHandler = new ClassRefHandler($this->nodes);
         $refHandler = new RefHandler($this->nodes);
+        $constFetchHandler = new GlobalConstHandler($this->nodes);
         $this->handlers = [
             Node\Stmt\Class_::class => new ClassDeclaration($this->nodes),
             Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes),
             Node\Stmt\Property::class => new ClassProperty($this->nodes),
             Function_::class => new FunctionDeclaration($this->nodes),
             Node\Stmt\Interface_::class => new InterfaceDeclarationHandler($this->nodes),
-            Node\Expr\ConstFetch::class => $refHandler,
             Node\Expr\FuncCall::class => $refHandler,
             Node\Expr\New_::class => $refHandler,
+
+            Node\Expr\ConstFetch::class => $constFetchHandler,
 
             Node\Expr\ClassConstFetch::class => $classRefHandler,
             Node\Expr\StaticCall::class => $classRefHandler,

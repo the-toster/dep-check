@@ -16,7 +16,7 @@ final class GlobalConstHandler extends AbstractHandler
 {
     public function handle(ConstFetch $constFetch): void
     {
-        if(strtolower($constFetch->name) === 'null') {
+        if(strtolower($constFetch->name->toString()) === 'null') {
             return;
         }
 
