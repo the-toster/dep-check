@@ -10,7 +10,6 @@ use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
 use DepCheck\NodesCollector\InputService;
 use DepCheck\NodesCollector\ParserService;
-use PhpParser\Node;
 use PhpParser\Node as AstNode;
 
 class AbstractHandler
@@ -30,7 +29,7 @@ class AbstractHandler
         return $this->nodes->toArray();
     }
 
-    protected function populateNode(Node $node): InputNode
+    protected function populateNode(AstNode $node): InputNode
     {
         $id = $this->parser->extractId($node);
         if ($this->nodes->has($id)) {

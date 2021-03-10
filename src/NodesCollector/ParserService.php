@@ -6,6 +6,7 @@ namespace DepCheck\NodesCollector;
 
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Function_;
@@ -17,8 +18,10 @@ final class ParserService
 {
     public function extractId(Node $node): string
     {
-        if($node instanceof Name) {
+        if ($node instanceof Name) {
             $name = $node;
+        } elseif ($node instanceof New_) {
+            $name = $node->class;
         } elseif(isset($node->namespacedName)) {
             $name = $node->namespacedName;
         } elseif (isset($node->name)) {
