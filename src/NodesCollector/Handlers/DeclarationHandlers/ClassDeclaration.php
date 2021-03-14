@@ -21,5 +21,22 @@ final class ClassDeclaration extends AbstractHandler
         foreach ($node->implements as $interface) {
             $class->addDependency($this->getDependency($interface, NodeDependency::IMPLEMENTS));
         }
+
+        if ($node->getDocComment()) {
+            $docComment = $node->getDocComment()->getText();
+
+            foreach (['property', 'property-read', 'property-write'] as $tagName) {
+                $paramTypesFromDocblock = $this->getTypesFromDocblock($docComment, $tagName);
+                foreach ($paramTypesFromDocblock as $type) {
+                    $this->handleTypeOccurrence($type, $class, NodeDependency::PROPERTY);
+                }
+            }
+
+
+//            $returnTypesFromDocblock = $this->getTypesFromDocblock($docComment, 'method');
+//            foreach ($returnTypesFromDocblock as $type) {
+//                $this->handleTypeOccurrence($type, $parent, NodeDependency::RETURN);
+//            }
+        }
     }
 }

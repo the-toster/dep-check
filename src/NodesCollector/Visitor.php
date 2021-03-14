@@ -38,7 +38,7 @@ final class Visitor extends NodeVisitorAbstract
         $refHandler = new RefHandler($this->nodes);
 
         $this->handlers = [
-            Node\Stmt\Class_::class => new ClassDeclaration($this->nodes),
+            Node\Stmt\Class_::class => new ClassDeclaration($this->nodes, $nameResolver),
             Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes, $nameResolver),
             Node\Stmt\Property::class => new ClassProperty($this->nodes, $nameResolver),
             Function_::class => new FunctionDeclaration($this->nodes, $nameResolver),
