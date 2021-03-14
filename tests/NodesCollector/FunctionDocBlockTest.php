@@ -24,7 +24,7 @@ final class FunctionDocBlockTest extends \PHPUnit\Framework\TestCase
 namespace RootNs\SubNs;
 use Other\SomeClass;
 /**
-* @param Container|SomeClass $a
+* @param Container<Item>|SomeClass|ArrItm[] $a
 * @return bool
 */
 function f($a, $b): bool {
