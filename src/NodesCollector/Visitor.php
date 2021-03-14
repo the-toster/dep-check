@@ -39,8 +39,8 @@ final class Visitor extends NodeVisitorAbstract
 
         $this->handlers = [
             Node\Stmt\Class_::class => new ClassDeclaration($this->nodes),
-            Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes),
-            Node\Stmt\Property::class => new ClassProperty($this->nodes),
+            Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes, $nameResolver),
+            Node\Stmt\Property::class => new ClassProperty($this->nodes, $nameResolver),
             Function_::class => new FunctionDeclaration($this->nodes, $nameResolver),
             Node\Stmt\Interface_::class => new InterfaceDeclarationHandler($this->nodes),
             Node\Expr\FuncCall::class => $refHandler,
@@ -93,7 +93,7 @@ final class Visitor extends NodeVisitorAbstract
      *
      *      - function params       -- done
      *      - function return type  -- done
-     *      - function docblock
+     *      - function docblock     -- done
      *      - method params         -- done
      *      - method return type    -- done
      *      - method docblock
@@ -111,7 +111,7 @@ final class Visitor extends NodeVisitorAbstract
      *
      *      - function params       -- done
      *      - function return type  -- done
-     *      - function docblock
+     *      - function docblock     -- done
      *      - method params         -- done
      *      - method return type    -- done
      *      - method docblock

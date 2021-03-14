@@ -24,21 +24,28 @@ final class FunctionDeclaration extends AbstractHandler
 
     public function handle(Function_ $node): void
     {
-        $funcDecl = $this->populateNode($node);
+        $parent = $this->populateNode($node);
 
-        if ($docComment = $node->getDocComment()) {
-            $typeParamsFromComment = $this->getTypesFromDocblock($docComment->getText(), 'param');
-            foreach ($typeParamsFromComment as $type) {
-                $this->handleTypeOccurrence($type, $funcDecl, NodeDependency::PARAM);
+        if ($node->getDocComment()) {
+            $docComment = $node->getDocComment()->getText();
+
+            $paramTypesFromDocblock = $this->getTypesFromDocblock($docComment, 'param');
+            foreach ($paramTypesFromDocblock as $type) {
+                $this->handleTypeOccurrence($type, $parent, NodeDependency::PARAM);
+            }
+
+            $returnTypesFromDocblock = $this->getTypesFromDocblock($docComment, 'return');
+            foreach ($returnTypesFromDocblock as $type) {
+                $this->handleTypeOccurrence($type, $parent, NodeDependency::RETURN);
             }
         }
 
         foreach ($node->params as $param) {
-            $this->handleTypeOccurrence($param->type, $funcDecl, NodeDependency::PARAM);
+            $this->handleTypeOccurrence($param->type, $parent, NodeDependency::PARAM);
         }
 
         if (isset($node->returnType)) {
-            $this->handleTypeOccurrence($node->returnType, $funcDecl, NodeDependency::RETURN);
+            $this->handleTypeOccurrence($node->returnType, $parent, NodeDependency::RETURN);
         }
     }
 

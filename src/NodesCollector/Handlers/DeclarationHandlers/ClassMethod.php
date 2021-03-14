@@ -17,6 +17,21 @@ final class ClassMethod extends AbstractHandler
         /** @var Class_ $classDecl */
         $classDecl = $node->getAttribute('parent');
         $parent = $this->populateNode($classDecl);
+
+        if ($node->getDocComment()) {
+            $docComment = $node->getDocComment()->getText();
+
+            $paramTypesFromDocblock = $this->getTypesFromDocblock($docComment, 'param');
+            foreach ($paramTypesFromDocblock as $type) {
+                $this->handleTypeOccurrence($type, $parent, NodeDependency::PARAM);
+            }
+
+            $returnTypesFromDocblock = $this->getTypesFromDocblock($docComment, 'return');
+            foreach ($returnTypesFromDocblock as $type) {
+                $this->handleTypeOccurrence($type, $parent, NodeDependency::RETURN);
+            }
+        }
+
         foreach($node->params as $param) {
             $this->handleTypeOccurrence($param->type, $parent, NodeDependency::PARAM);
         }
