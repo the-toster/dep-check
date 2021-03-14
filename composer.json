@@ -3,7 +3,8 @@
     "description": "Assert every dependency has a rule",
     "type": "project",
     "require": {
-        "nikic/php-parser": "^4.10"
+        "nikic/php-parser": "^4.10",
+        "phpdocumentor/reflection-docblock": "^5.2"
     },
     "autoload": {
         "psr-4": {

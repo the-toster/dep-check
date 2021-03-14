@@ -8,20 +8,23 @@ use DepCheck\Model\Input\Node as InputNode;
 use DepCheck\Model\Input\NodeDependency;
 use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
-use DepCheck\NodesCollector\InputService;
+use DepCheck\NodesCollector\NameResolutionVisitor;
 use DepCheck\NodesCollector\ParserService;
 use PhpParser\Node as AstNode;
+use PhpParser\NodeVisitor\NameResolver;
 
 class AbstractHandler
 {
 
     private ParserService $parser;
     private NodeCollection $nodes;
+    protected ?NameResolutionVisitor $nameResolver;
 
-    public function __construct(NodeCollection $nodes)
+    public function __construct(NodeCollection $nodes, NameResolutionVisitor $nameResolver = null)
     {
         $this->parser = new ParserService();
         $this->nodes = $nodes;
+        $this->nameResolver = $nameResolver;
     }
 
     public function getNodes(): array

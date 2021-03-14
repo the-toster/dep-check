@@ -5,19 +5,14 @@ declare(strict_types=1);
 namespace DepCheck\NodesCollector;
 
 
-use DepCheck\Model\Input\Node as CheckNode;
-use DepCheck\NodesCollector\Handlers\ClassConstantHandler;
 use DepCheck\NodesCollector\Handlers\ClassRefHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassDeclaration;
-use DepCheck\NodesCollector\Handlers\ClassInstantiationHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassMethod;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\ClassProperty;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\InterfaceDeclarationHandler;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\TraitDeclaration;
-use DepCheck\NodesCollector\Handlers\FunctionCall;
 use DepCheck\NodesCollector\Handlers\DeclarationHandlers\FunctionDeclaration;
 use DepCheck\NodesCollector\Handlers\AbstractHandler;
-use DepCheck\NodesCollector\Handlers\GlobalConstantHandler;
 use DepCheck\NodesCollector\Handlers\GlobalConstHandler;
 use DepCheck\NodesCollector\Handlers\NodeCollection;
 use DepCheck\NodesCollector\Handlers\RefHandler;
@@ -35,7 +30,7 @@ final class Visitor extends NodeVisitorAbstract
 
     private NodeCollection $nodes;
 
-    public function __construct()
+    public function __construct(NameResolutionVisitor $nameResolver)
     {
         $this->nodes = new NodeCollection();
         $classRef = new ClassRefHandler($this->nodes);
@@ -45,7 +40,7 @@ final class Visitor extends NodeVisitorAbstract
             Node\Stmt\Class_::class => new ClassDeclaration($this->nodes),
             Node\Stmt\ClassMethod::class => new ClassMethod($this->nodes),
             Node\Stmt\Property::class => new ClassProperty($this->nodes),
-            Function_::class => new FunctionDeclaration($this->nodes),
+            Function_::class => new FunctionDeclaration($this->nodes, $nameResolver),
             Node\Stmt\Interface_::class => new InterfaceDeclarationHandler($this->nodes),
             Node\Expr\FuncCall::class => $refHandler,
             Node\Expr\New_::class => $refHandler,

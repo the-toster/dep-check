@@ -26,13 +26,13 @@ final class NodeExtractor
 
         $nodeTraverser = new NodeTraverser();
 
-        $nameResolver = new NameResolver();
+        $nameResolver = new NameResolutionVisitor(new NameResolver());
         $nodeTraverser->addVisitor($nameResolver);
 
         $parentResolver = new ParentConnectingVisitor();
         $nodeTraverser->addVisitor($parentResolver);
 
-        $collectorVisitor = new Visitor();
+        $collectorVisitor = new Visitor($nameResolver);
         $nodeTraverser->addVisitor($collectorVisitor);
 
         $ast = $parser->parse($file->content);
