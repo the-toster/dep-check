@@ -19,6 +19,7 @@ use DepCheck\NodesCollector\Handlers\RefHandler;
 use DepCheck\NodesCollector\Handlers\TraitUseHandler;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Function_;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\NodeVisitorAbstract;
 
 final class Visitor extends NodeVisitorAbstract
@@ -30,7 +31,7 @@ final class Visitor extends NodeVisitorAbstract
 
     private NodeCollection $nodes;
 
-    public function __construct(NameResolutionVisitor $nameResolver)
+    public function __construct(NameResolver $nameResolver)
     {
         $this->nodes = new NodeCollection();
         $classRef = new ClassRefHandler($this->nodes);

@@ -26,7 +26,7 @@ final class NodeExtractor
 
         $nodeTraverser = new NodeTraverser();
 
-        $nameResolver = new NameResolutionVisitor(new NameResolver());
+        $nameResolver = new NameResolver();
         $nodeTraverser->addVisitor($nameResolver);
 
         $parentResolver = new ParentConnectingVisitor();

@@ -8,6 +8,7 @@ use DepCheck\Model\Input\Node as InputNode;
 use DepCheck\Model\Input\NodeDependency;
 use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
+use DepCheck\NodesCollector\DocBlockService;
 use DepCheck\NodesCollector\NameResolutionVisitor;
 use DepCheck\NodesCollector\ParserService;
 use PhpParser\Node as AstNode;
@@ -17,12 +18,14 @@ class AbstractHandler
 {
 
     private ParserService $parser;
+    private DocBlockService $docBlockService;
     private NodeCollection $nodes;
-    protected ?NameResolutionVisitor $nameResolver;
+    protected ?NameResolver $nameResolver;
 
-    public function __construct(NodeCollection $nodes, NameResolutionVisitor $nameResolver = null)
+    public function __construct(NodeCollection $nodes, NameResolver $nameResolver = null)
     {
         $this->parser = new ParserService();
+        $this->docBlockService = new DocBlockService();
         $this->nodes = $nodes;
         $this->nameResolver = $nameResolver;
     }
@@ -30,6 +33,23 @@ class AbstractHandler
     public function getNodes(): array
     {
         return $this->nodes->toArray();
+    }
+
+    /**
+     * @param string $commentText
+     * @param string $tagName
+     * @return AstNode\Name[]
+     */
+    protected function getTypesFromDocblock(string $commentText, string $tagName): array
+    {
+        $stringNames = $this->docBlockService->getTypesFromDocblock($commentText, $tagName);
+        $resolver = $this->nameResolver->getNameContext();
+        $names = [];
+        foreach ($stringNames as $relativeName) {
+            $names[] = $resolver->getResolvedClassName(new AstNode\Name($relativeName));
+        }
+
+        return $names;
     }
 
     protected function populateNode(AstNode $node): InputNode

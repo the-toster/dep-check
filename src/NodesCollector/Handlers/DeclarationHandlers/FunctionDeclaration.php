@@ -22,14 +22,15 @@ use PhpParser\Node\Stmt\Function_;
 final class FunctionDeclaration extends AbstractHandler
 {
 
-
     public function handle(Function_ $node): void
     {
         $funcDecl = $this->populateNode($node);
 
         if ($docComment = $node->getDocComment()) {
-            $types = $this->getTypesFromDocblock($docComment->getText(), 'param');
-            var_dump($types);
+            $typeParamsFromComment = $this->getTypesFromDocblock($docComment->getText(), 'param');
+            foreach ($typeParamsFromComment as $type) {
+                $this->handleTypeOccurrence($type, $funcDecl, NodeDependency::PARAM);
+            }
         }
 
         foreach ($node->params as $param) {

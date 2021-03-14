@@ -16,15 +16,27 @@ final class FunctionDocBlockTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             [
-                'f' => ['SomeClass'],
-                'SomeClass' => [],
+                'RootNs\\SubNs\\f' => [
+                    'RootNs\\SubNs\\SomeClass',
+                    'RootNs\\SubNs\\Container',
+                    'RootNs\\SubNs\\Item',
+                    'Other\\SomeClass',
+                    'RootNs\\SubNs\\ArrItem',
+                    'GlobalClass',
+                    ],
+                'RootNs\\SubNs\\SomeClass' => [],
+                'RootNs\\SubNs\\Container' => [],
+                'RootNs\\SubNs\\Item' => [],
+                'Other\\SomeClass' => [],
+                'RootNs\\SubNs\\ArrItem' => [],
+                'GlobalClass' => [],
             ],
             $this->getNodes(<<<'CODE'
 <?php
 namespace RootNs\SubNs;
 use Other\SomeClass;
 /**
-* @param Container<Item>|SomeClass|ArrItm[] $a
+* @param \GlobalClass|Container<Item>|SomeClass|ArrItm[] $a
 * @return bool
 */
 function f($a, $b): bool {
