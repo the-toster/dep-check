@@ -46,7 +46,12 @@ class AbstractHandler
         $resolver = $this->nameResolver->getNameContext();
         $names = [];
         foreach ($stringNames as $relativeName) {
-            $names[] = $resolver->getResolvedClassName(new AstNode\Name($relativeName));
+            if(strpos($relativeName, '\\') === 0) {
+                $parserName = new AstNode\Name\FullyQualified(ltrim($relativeName, '\\'));
+            } else {
+                $parserName = new AstNode\Name($relativeName);
+            }
+            $names[] = $resolver->getResolvedClassName($parserName);
         }
 
         return $names;

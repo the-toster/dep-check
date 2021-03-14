@@ -11,39 +11,60 @@ use Tests\Helper\NodesGraphConverter;
 
 final class FunctionDocBlockTest extends \PHPUnit\Framework\TestCase
 {
+
     /** @test */
-    public function it_can_collect_param(): void
+    public function it_can_collect_return_type(): void
     {
         $this->assertEquals(
             [
                 'RootNs\\SubNs\\f' => [
-                    'RootNs\\SubNs\\SomeClass',
-                    'RootNs\\SubNs\\Container',
-                    'RootNs\\SubNs\\Item',
                     'Other\\SomeClass',
-                    'RootNs\\SubNs\\ArrItem',
-                    'GlobalClass',
-                    ],
-                'RootNs\\SubNs\\SomeClass' => [],
-                'RootNs\\SubNs\\Container' => [],
-                'RootNs\\SubNs\\Item' => [],
+                ],
                 'Other\\SomeClass' => [],
-                'RootNs\\SubNs\\ArrItem' => [],
-                'GlobalClass' => [],
             ],
             $this->getNodes(<<<'CODE'
 <?php
 namespace RootNs\SubNs;
 use Other\SomeClass;
 /**
-* @param \GlobalClass|Container<Item>|SomeClass|ArrItm[] $a
+* @return SomeClass
+*/
+function f() {
+    
+}
+CODE));
+    }
+    /** @test */
+    public function it_can_collect_complex_param(): void
+    {
+        $this->assertEquals(
+            [
+                'RootNs\\SubNs\\f' => [
+                    'GlobalClass',
+                    'RootNs\\SubNs\\Container',
+                    'RootNs\\SubNs\\Item',
+                    'Other\\SomeClass',
+                    'RootNs\\SubNs\\ArrItem',
+                    ],
+                'GlobalClass' => [],
+                'RootNs\\SubNs\\Container' => [],
+                'RootNs\\SubNs\\Item' => [],
+                'Other\\SomeClass' => [],
+                'RootNs\\SubNs\\ArrItem' => [],
+            ],
+            $this->getNodes(<<<'CODE'
+<?php
+namespace RootNs\SubNs;
+use Other\SomeClass;
+/**
+* @param \GlobalClass|Container<Item> $a
+* @param SomeClass|ArrItem[]|bool $b
 * @return bool
 */
 function f($a, $b): bool {
     return false;
 }
-CODE)
-        );
+CODE));
     }
 
     private function getNodes(string $content): array

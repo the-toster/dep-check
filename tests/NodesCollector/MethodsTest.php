@@ -20,9 +20,19 @@ final class MethodsTest extends TestCase
                 'TestData\Cl\C' => [ 'TestData\Cl\Ret'],
                 'TestData\Cl\Ret' => []
             ],
-            $this->getNodes($this->getClassNullableMethod())
-        );
+            $this->getNodes(<<<'CODE'
+<?php
+namespace TestData\Cl;
+
+final class C {
+    private function m1(): ?Ret
+    {
+        return null;
     }
+}
+CODE));
+    }
+
     /** @test */
     public function it_can_collect_from_class(): void
     {
@@ -75,21 +85,6 @@ CODE)
         $file = new SourceFile('name', $content);
         $nodes = (new NodeExtractor())->extract($file);
         return (new NodesGraphConverter())->toIds($nodes);
-    }
-
-    private function getClassNullableMethod(): string
-    {
-        return <<<'CODE'
-<?php
-namespace TestData\Cl;
-
-final class C {
-    private function m1(): ?Ret
-    {
-        return null;
-    }
-}
-CODE;
     }
 
     private function getClassWithMethods(): string
