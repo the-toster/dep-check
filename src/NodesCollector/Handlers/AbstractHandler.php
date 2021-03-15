@@ -8,7 +8,7 @@ use DepCheck\Model\Input\Node as InputNode;
 use DepCheck\Model\Input\NodeDependency;
 use DepCheck\Model\Input\NodePosition;
 use DepCheck\Model\Input\Properties;
-use DepCheck\NodesCollector\DocBlockService;
+use DepCheck\NodesCollector\DocBlock\DocBlockService;
 use DepCheck\NodesCollector\NameResolutionVisitor;
 use DepCheck\NodesCollector\ParserService;
 use PhpParser\Node as AstNode;

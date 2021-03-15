@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DepCheck\NodesCollector;
+namespace DepCheck\NodesCollector\DocBlock;
 
 
+use phpDocumentor\Reflection\DocBlock\Tags\Method;
 use phpDocumentor\Reflection\DocBlock\Tags\TagWithType;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Fqsen;
@@ -14,7 +15,6 @@ use phpDocumentor\Reflection\Types\Collection;
 use phpDocumentor\Reflection\Types\Compound;
 use phpDocumentor\Reflection\Types\Context;
 use phpDocumentor\Reflection\Types\Object_;
-use PhpParser\Node\Name;
 
 final class DocBlockService
 {
@@ -29,13 +29,40 @@ final class DocBlockService
         $factory = DocBlockFactory::createInstance();
         $surrogateContext = new Context('Surrogate');
         $docblock = $factory->create($docComment, $surrogateContext);
+
         foreach ($docblock->getTagsByName($tagName) as $tag) {
             if ($tag instanceof TagWithType && $type = $tag->getType()) {
                 $types = array_merge($types, $this->extractSingularTypes($type));
             }
         }
 
-        return $this->convertToNames($types, new Context('Surrogate'));
+        return $this->convertToNames($types, $surrogateContext);
+    }
+
+    /**
+     * @param string $docComment
+     * @return string[]
+     */
+    public function getTypesFromMethodTags(string $docComment): array
+    {
+        $paramTypes = [];
+        $returnTypes = [];
+        $factory = DocBlockFactory::createInstance();
+        $surrogateContext = new Context('Surrogate');
+        $docblock = $factory->create($docComment, $surrogateContext);
+        foreach ($docblock->getTagsByName('method') as $tag) {
+            /** @var Method $tag*/
+            foreach ($tag->getArguments() as $argType) {
+                if($argType instanceof Type) {
+                    $paramTypes = array_merge($paramTypes, $this->extractSingularTypes($argType));
+                }
+            }
+            $returnTypes = array_merge($returnTypes, $this->extractSingularTypes($tag->getReturnType()));
+        }
+
+        $paramTypes = $this->convertToNames($paramTypes, $surrogateContext);
+        $returnTypes = $this->convertToNames($returnTypes, $surrogateContext);
+        return [];
     }
 
     /**

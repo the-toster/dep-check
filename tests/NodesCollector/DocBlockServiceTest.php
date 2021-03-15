@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\NodesCollector;
 
 
-use DepCheck\NodesCollector\DocBlockService;
+use DepCheck\NodesCollector\DocBlock\DocBlockService;
 use PHPUnit\Framework\TestCase;
 
 final class DocBlockServiceTest extends TestCase
