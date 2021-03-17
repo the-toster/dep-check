@@ -62,7 +62,7 @@ final class DocBlockService
 
         $paramTypes = $this->convertToNames($paramTypes, $surrogateContext);
         $returnTypes = $this->convertToNames($returnTypes, $surrogateContext);
-        return [];
+        return ['params'=> $paramTypes, 'return'=>$returnTypes];
     }
 
     /**

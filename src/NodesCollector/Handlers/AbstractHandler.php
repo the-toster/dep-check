@@ -18,7 +18,7 @@ class AbstractHandler
 {
 
     private ParserService $parser;
-    private DocBlockService $docBlockService;
+    protected DocBlockService $docBlockService;
     private NodeCollection $nodes;
     protected ?NameResolver $nameResolver;
 
@@ -43,9 +43,18 @@ class AbstractHandler
     protected function getTypesFromDocblock(string $commentText, string $tagName): array
     {
         $stringNames = $this->docBlockService->getTypesFromDocblock($commentText, $tagName);
+        return $this->convertStringsToNames($stringNames);
+    }
+
+    /**
+     * @param string[] $strings
+     * @return AstNode\Name[]
+     */
+    protected function convertStringsToNames(array $strings): array
+    {
         $resolver = $this->nameResolver->getNameContext();
         $names = [];
-        foreach ($stringNames as $relativeName) {
+        foreach ($strings as $relativeName) {
             if(strpos($relativeName, '\\') === 0) {
                 $parserName = new AstNode\Name\FullyQualified(ltrim($relativeName, '\\'));
             } else {

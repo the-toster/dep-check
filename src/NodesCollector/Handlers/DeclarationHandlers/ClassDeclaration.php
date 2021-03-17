@@ -33,10 +33,13 @@ final class ClassDeclaration extends AbstractHandler
             }
 
 
-//            $returnTypesFromDocblock = $this->getTypesFromDocblock($docComment, 'method');
-//            foreach ($returnTypesFromDocblock as $type) {
-//                $this->handleTypeOccurrence($type, $parent, NodeDependency::RETURN);
-//            }
+            $methodsTypes = $this->docBlockService->getTypesFromMethodTags($docComment);
+            foreach ($this->convertStringsToNames($methodsTypes['params']) as $type) {
+                $this->handleTypeOccurrence($type, $class, NodeDependency::PARAM);
+            }
+            foreach ($this->convertStringsToNames($methodsTypes['return']) as $type) {
+                $this->handleTypeOccurrence($type, $class, NodeDependency::RETURN);
+            }
         }
     }
 }
